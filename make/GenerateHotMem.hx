@@ -1,0 +1,105 @@
+package ;
+
+import sys.FileSystem;
+import hxmake.cli.CL;
+import hxmake.Task;
+import sys.io.File;
+import haxe.Template;
+
+class GenerateHotMem extends Task {
+
+	var _outputPath:String = "src/hotmem/";
+
+	public function new() {}
+
+	override public function run() {
+		CL.workingDir.push(module.path);
+		generate();
+		CL.workingDir.pop();
+	}
+
+	function generate() {
+
+		if(!FileSystem.exists(_outputPath)) {
+			FileSystem.createDirectory(_outputPath);
+		}
+
+		var tplBuffer = new Template(File.getContent("templates/hotmem/Array.mtt.hx"));
+		var tplType = new Template(File.getContent("templates/hotmem/Type.mtt.hx"));
+		var tplHotMemory = new Template(File.getContent("templates/hotmem/HotMemory.mtt.hx"));
+		var tplHotView = new Template(File.getContent("templates/hotmem/HotView.mtt.hx"));
+
+		var types = [
+			"U8",
+			"U16",
+			"I32",
+			"F32"
+		];
+		var specificTypes = [
+			"UInt8",
+			"UInt16",
+			"Int32",
+			"Float32"
+		];
+		var csTypes = [
+			"cs.StdTypes.UInt8",
+			"cs.StdTypes.UInt16",
+			"Int",
+			"Single"
+		];
+		var javaTypes = [
+			"java.StdTypes.Int8",
+			"java.StdTypes.Int16",
+			"Int",
+			"Single"
+		];
+		var genericTypes = [
+			"Int",
+			"Int",
+			"Int",
+			"Float"
+		];
+		var sizes = [
+			1,
+			2,
+			4,
+			4
+		];
+		var flash_get = ["getByte", "getUI16", "getI32", "getFloat"];
+		var flash_set = ["setByte", "setI16", "setI32", "setFloat"];
+		var amsjs_reg_prefix = ["", "", "", "+"];
+		var amsjs_reg_postfix = ["|0", "|0", "|0", ""];
+
+		var typesContext = { TYPES: [] };
+		for(i in 0...types.length) {
+			var typeName = types[i];
+			var size = sizes[i];
+			var context = {
+				EL_SHIFT: size >> 1, // fix with log2
+				EXPR_LEFT_SHIFT: "",
+				EXPR_RIGHT_SHIFT: "",
+				SIZE: size,
+				FLASH_MEM_SET: flash_set[i],
+				FLASH_MEM_GET: flash_get[i],
+				POST_ASMJS: amsjs_reg_postfix[i],
+				PRE_ASMJS: amsjs_reg_prefix[i],
+				TYPE: typeName,
+				GENERIC_TYPE: genericTypes[i],
+				SPECIFIC_TYPE: specificTypes[i],
+				JAVA_TYPE: javaTypes[i],
+				CS_TYPE: csTypes[i],
+				CPP_POINTER_TYPE: 'cpp::${specificTypes[i]}*'
+			};
+			if(context.EL_SHIFT > 0) {
+				context.EXPR_LEFT_SHIFT = " << " + context.EL_SHIFT;
+				context.EXPR_RIGHT_SHIFT = " >> " + context.EL_SHIFT;
+			}
+			typesContext.TYPES.push(context);
+			File.saveContent(_outputPath + typeName + "Array.hx", tplBuffer.execute(context));
+			File.saveContent(_outputPath + typeName + ".hx", tplType.execute(context));
+		}
+
+		File.saveContent(_outputPath + "HotMemory.hx", tplHotMemory.execute(typesContext));
+		File.saveContent(_outputPath + "HotView.hx", tplHotView.execute(typesContext));
+	}
+}

@@ -1,0 +1,20 @@
+{
+	"name": "hotmem",
+	"license": "MIT",
+	"tags": [
+		"memory",
+		"hot",
+		"data",
+		"access",
+		"primitive",
+		"cross"
+	],
+	"classPath": "src",
+	"description": "Hot-memory library for Haxe",
+	"contributors": [
+		"eliasku"
+	],
+	"releasenote": "Initial",
+	"version": "0.0.1",
+	"url": "https://github.com/eliasku/hotmem"
+}
