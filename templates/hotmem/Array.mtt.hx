@@ -31,6 +31,10 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 	}
 
 	@:unreflective inline public function dispose() {
+#if hotmem_debug
+		__checkValid();
+#end
+
 #if (js || flash)
 		@:privateAccess HotMemory.free(this #if js ::EXPR_LEFT_SHIFT:: #end);
 #elseif (cpp||java||cs)
@@ -42,7 +46,8 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 
 	@:unreflective
 	@:arrayAccess inline function set(index:Int, element:::TYPE::) {
-#if debug
+#if hotmem_debug
+		__checkValid();
 		__checkBounds(index);
 #end
 
@@ -59,7 +64,8 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 
 	@:unreflective
 	@:arrayAccess inline function get(index:Int):::TYPE:: {
-#if debug
+#if hotmem_debug
+		__checkValid();
 		__checkBounds(index);
 #end
 
@@ -78,6 +84,10 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 
 	@:unreflective
 	inline function get_length():Int {
+#if hotmem_debug
+		__checkValid();
+#end
+
 #if flash
 		return HotMemory.getI32(this - 4)::EXPR_RIGHT_SHIFT::;
 #elseif js
@@ -95,6 +105,11 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 	@:unreflective
 	@:access(hotmem.HotView)
 	inline public function view(atElement:Int = 0):HotView {
+#if hotmem_debug
+		__checkBounds(atElement);
+		__checkValid();
+#end
+
 		::if (EL_SHIFT > 0)::
 		return new HotView(this #if js ::EXPR_LEFT_SHIFT:: #end, atElement::EXPR_LEFT_SHIFT::);
 		::else::
@@ -103,11 +118,17 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 	}
 #end
 
-#if debug
+#if hotmem_debug
 	function __checkBounds(index:Int) {
 		if(index < 0 || index >= length) throw 'index out of bounds [index: $index, length: $length]';
 	}
+
+	function __checkValid() {
+#if (js||cs||java||cpp)
+		if(this == null) throw "Array is not created";
+#else
+		if(this == 0) throw "Array is not created";
 #end
-
+	}
+#end
 }
-

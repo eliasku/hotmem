@@ -63,18 +63,18 @@ class HotMemory {
 		setI32(bufferLocation, bytesLength);
 		_nextLocation = bytesOffset + bytesLength;
 		if(_nextLocation & 0x3 != 0) {
-			#if debug
-			trace("RE-ALIGN: " + StringTools.hex(_nextLocation));
+			#if hotmem_debug
+			trace("[hotmem] RE-ALIGN: " + StringTools.hex(_nextLocation));
 			#end
 			_nextLocation = (_nextLocation + 4) & (~0x3);
-			#if debug
-			trace("TO: " + StringTools.hex(_nextLocation));
+			#if hotmem_debug
+			trace("[hotmem] TO: " + StringTools.hex(_nextLocation));
 			#end
 		}
 //_nextLocation = ((_nextLocation + 3) >> 2) << 2;
-		#if debug
-		trace("Allocated " + bytesLength + " bytes");
-		trace("Heap position " + Std.int(_nextLocation / 1000000) + " mb");
+		#if hotmem_debug
+		trace("[hotmem] Allocated " + bytesLength + " bytes");
+		trace("[hotmem] Heap position " + Std.int(_nextLocation / 1000000) + " mb");
 		#end
 		return bytesOffset;
 	}
@@ -86,10 +86,20 @@ class HotMemory {
 		_freeLength.push(getI32(bytesOffset) + 4);
 	}
 
+#if hotmem_debug
+	static function __checkBounds(address:Int) {
+		if(address < 0 || address >= size) throw "[hotmem] bad adress: " + address + ", size: " + size;
+	}
+#end
+
 
 
 	/** Set UInt8 value at address **/
 	@:extern inline static public function setU8(address:Int, value:U8):Void {
+#if hotmem_debug
+		__checkBounds(address);
+#end
+
 #if flash
 		flash.Memory.setByte(address, value);
 #elseif asm_js
@@ -101,6 +111,10 @@ class HotMemory {
 
 	/** Get UInt8 value at address **/
 	@:extern inline static public function getU8(address:Int):U8 {
+#if hotmem_debug
+		__checkBounds(address);
+#end
+
 #if flash
 		return flash.Memory.getByte(address);
 #elseif asm_js
@@ -112,6 +126,10 @@ class HotMemory {
 
 	/** Get UInt8 value at typed index **/
 	@:extern inline static public function setU8elem(index:Int, value:U8):Void {
+#if hotmem_debug
+		__checkBounds(index);
+#end
+
 #if flash
 		flash.Memory.setByte(index, value);
 #elseif asm_js
@@ -123,6 +141,10 @@ class HotMemory {
 
 	/** Set UInt8 value at typed index **/
 	@:extern inline static public function getU8elem(index:Int):U8 {
+#if hotmem_debug
+		__checkBounds(index);
+#end
+
 #if flash
 		return flash.Memory.getByte(index);
 #elseif asm_js
@@ -136,6 +158,10 @@ class HotMemory {
 
 	/** Set UInt16 value at address **/
 	@:extern inline static public function setU16(address:Int, value:U16):Void {
+#if hotmem_debug
+		__checkBounds(address);
+#end
+
 #if flash
 		flash.Memory.setI16(address, value);
 #elseif asm_js
@@ -147,6 +173,10 @@ class HotMemory {
 
 	/** Get UInt16 value at address **/
 	@:extern inline static public function getU16(address:Int):U16 {
+#if hotmem_debug
+		__checkBounds(address);
+#end
+
 #if flash
 		return flash.Memory.getUI16(address);
 #elseif asm_js
@@ -158,6 +188,10 @@ class HotMemory {
 
 	/** Get UInt16 value at typed index **/
 	@:extern inline static public function setU16elem(index:Int, value:U16):Void {
+#if hotmem_debug
+		__checkBounds(index << 1);
+#end
+
 #if flash
 		flash.Memory.setI16(index << 1, value);
 #elseif asm_js
@@ -169,6 +203,10 @@ class HotMemory {
 
 	/** Set UInt16 value at typed index **/
 	@:extern inline static public function getU16elem(index:Int):U16 {
+#if hotmem_debug
+		__checkBounds(index << 1);
+#end
+
 #if flash
 		return flash.Memory.getUI16(index << 1);
 #elseif asm_js
@@ -182,6 +220,10 @@ class HotMemory {
 
 	/** Set Int32 value at address **/
 	@:extern inline static public function setI32(address:Int, value:I32):Void {
+#if hotmem_debug
+		__checkBounds(address);
+#end
+
 #if flash
 		flash.Memory.setI32(address, value);
 #elseif asm_js
@@ -193,6 +235,10 @@ class HotMemory {
 
 	/** Get Int32 value at address **/
 	@:extern inline static public function getI32(address:Int):I32 {
+#if hotmem_debug
+		__checkBounds(address);
+#end
+
 #if flash
 		return flash.Memory.getI32(address);
 #elseif asm_js
@@ -204,6 +250,10 @@ class HotMemory {
 
 	/** Get Int32 value at typed index **/
 	@:extern inline static public function setI32elem(index:Int, value:I32):Void {
+#if hotmem_debug
+		__checkBounds(index << 2);
+#end
+
 #if flash
 		flash.Memory.setI32(index << 2, value);
 #elseif asm_js
@@ -215,6 +265,10 @@ class HotMemory {
 
 	/** Set Int32 value at typed index **/
 	@:extern inline static public function getI32elem(index:Int):I32 {
+#if hotmem_debug
+		__checkBounds(index << 2);
+#end
+
 #if flash
 		return flash.Memory.getI32(index << 2);
 #elseif asm_js
@@ -228,6 +282,10 @@ class HotMemory {
 
 	/** Set Float32 value at address **/
 	@:extern inline static public function setF32(address:Int, value:F32):Void {
+#if hotmem_debug
+		__checkBounds(address);
+#end
+
 #if flash
 		flash.Memory.setFloat(address, value);
 #elseif asm_js
@@ -239,6 +297,10 @@ class HotMemory {
 
 	/** Get Float32 value at address **/
 	@:extern inline static public function getF32(address:Int):F32 {
+#if hotmem_debug
+		__checkBounds(address);
+#end
+
 #if flash
 		return flash.Memory.getFloat(address);
 #elseif asm_js
@@ -250,6 +312,10 @@ class HotMemory {
 
 	/** Get Float32 value at typed index **/
 	@:extern inline static public function setF32elem(index:Int, value:F32):Void {
+#if hotmem_debug
+		__checkBounds(index << 2);
+#end
+
 #if flash
 		flash.Memory.setFloat(index << 2, value);
 #elseif asm_js
@@ -261,6 +327,10 @@ class HotMemory {
 
 	/** Set Float32 value at typed index **/
 	@:extern inline static public function getF32elem(index:Int):F32 {
+#if hotmem_debug
+		__checkBounds(index << 2);
+#end
+
 #if flash
 		return flash.Memory.getFloat(index << 2);
 #elseif asm_js

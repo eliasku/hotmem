@@ -31,6 +31,10 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 	}
 
 	@:unreflective inline public function dispose() {
+#if hotmem_debug
+		__checkValid();
+#end
+
 #if (js || flash)
 		@:privateAccess HotMemory.free(this #if js  #end);
 #elseif (cpp||java||cs)
@@ -42,7 +46,8 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 
 	@:unreflective
 	@:arrayAccess inline function set(index:Int, element:U8) {
-#if debug
+#if hotmem_debug
+		__checkValid();
 		__checkBounds(index);
 #end
 
@@ -59,7 +64,8 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 
 	@:unreflective
 	@:arrayAccess inline function get(index:Int):U8 {
-#if debug
+#if hotmem_debug
+		__checkValid();
 		__checkBounds(index);
 #end
 
@@ -78,6 +84,10 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 
 	@:unreflective
 	inline function get_length():Int {
+#if hotmem_debug
+		__checkValid();
+#end
+
 #if flash
 		return HotMemory.getI32(this - 4);
 #elseif js
@@ -95,17 +105,28 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 	@:unreflective
 	@:access(hotmem.HotView)
 	inline public function view(atElement:Int = 0):HotView {
+#if hotmem_debug
+		__checkBounds(atElement);
+		__checkValid();
+#end
+
 		
 		return new HotView(this, atElement);
 		
 	}
 #end
 
-#if debug
+#if hotmem_debug
 	function __checkBounds(index:Int) {
 		if(index < 0 || index >= length) throw 'index out of bounds [index: $index, length: $length]';
 	}
+
+	function __checkValid() {
+#if (js||cs||java||cpp)
+		if(this == null) throw "Array is not created";
+#else
+		if(this == 0) throw "Array is not created";
 #end
-
+	}
+#end
 }
-

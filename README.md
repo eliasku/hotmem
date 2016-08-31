@@ -13,6 +13,8 @@ Hot memory access for Haxe
 | cs     | -         | -                     | NativeArray            |
 | java   | -         | -                     | NativeArray            |
 
+Define `-D hotmem_debug` enabling bounds checking, traces and additional asserts
+
 ## Usage
 
 Initialize HotMemory storage just for all targets generalization (could be improved later)
@@ -67,4 +69,4 @@ value = view.getF32(bytePosition);
 - NodeJS implementation
 - Types: I8, I16, U32, F64
 - Java / CS implementation and memory view
-- General fallback for other dynamic targets (even `macro`)
+- General fallback for other dynamic targets (`macro` as well)

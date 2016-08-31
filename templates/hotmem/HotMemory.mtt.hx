@@ -63,18 +63,18 @@ class HotMemory {
 		setI32(bufferLocation, bytesLength);
 		_nextLocation = bytesOffset + bytesLength;
 		if(_nextLocation & 0x3 != 0) {
-			#if debug
-			trace("RE-ALIGN: " + StringTools.hex(_nextLocation));
+			#if hotmem_debug
+			trace("[hotmem] RE-ALIGN: " + StringTools.hex(_nextLocation));
 			#end
 			_nextLocation = (_nextLocation + 4) & (~0x3);
-			#if debug
-			trace("TO: " + StringTools.hex(_nextLocation));
+			#if hotmem_debug
+			trace("[hotmem] TO: " + StringTools.hex(_nextLocation));
 			#end
 		}
 //_nextLocation = ((_nextLocation + 3) >> 2) << 2;
-		#if debug
-		trace("Allocated " + bytesLength + " bytes");
-		trace("Heap position " + Std.int(_nextLocation / 1000000) + " mb");
+		#if hotmem_debug
+		trace("[hotmem] Allocated " + bytesLength + " bytes");
+		trace("[hotmem] Heap position " + Std.int(_nextLocation / 1000000) + " mb");
 		#end
 		return bytesOffset;
 	}
@@ -86,10 +86,20 @@ class HotMemory {
 		_freeLength.push(getI32(bytesOffset) + 4);
 	}
 
+#if hotmem_debug
+	static function __checkBounds(address:Int) {
+		if(address < 0 || address >= size) throw "[hotmem] bad adress: " + address + ", size: " + size;
+	}
+#end
+
 ::foreach TYPES::
 
 	/** Set ::SPECIFIC_TYPE:: value at address **/
 	@:extern inline static public function set::TYPE::(address:Int, value:::TYPE::):Void {
+#if hotmem_debug
+		__checkBounds(address);
+#end
+
 #if flash
 		flash.Memory.::FLASH_MEM_SET::(address, value);
 #elseif asm_js
@@ -101,6 +111,10 @@ class HotMemory {
 
 	/** Get ::SPECIFIC_TYPE:: value at address **/
 	@:extern inline static public function get::TYPE::(address:Int):::TYPE:: {
+#if hotmem_debug
+		__checkBounds(address);
+#end
+
 #if flash
 		return flash.Memory.::FLASH_MEM_GET::(address);
 #elseif asm_js
@@ -112,6 +126,10 @@ class HotMemory {
 
 	/** Get ::SPECIFIC_TYPE:: value at typed index **/
 	@:extern inline static public function set::TYPE::elem(index:Int, value:::TYPE::):Void {
+#if hotmem_debug
+		__checkBounds(index::EXPR_LEFT_SHIFT::);
+#end
+
 #if flash
 		flash.Memory.::FLASH_MEM_SET::(index::EXPR_LEFT_SHIFT::, value);
 #elseif asm_js
@@ -123,6 +141,10 @@ class HotMemory {
 
 	/** Set ::SPECIFIC_TYPE:: value at typed index **/
 	@:extern inline static public function get::TYPE::elem(index:Int):::TYPE:: {
+#if hotmem_debug
+		__checkBounds(index::EXPR_LEFT_SHIFT::);
+#end
+
 #if flash
 		return flash.Memory.::FLASH_MEM_GET::(index::EXPR_LEFT_SHIFT::);
 #elseif asm_js
