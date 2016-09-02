@@ -5,16 +5,18 @@
 		"memory",
 		"hot",
 		"data",
+		"array",
 		"access",
 		"primitive",
-		"cross"
+		"cross",
+		"cache"
 	],
 	"classPath": "src",
-	"description": "Hot-memory library for Haxe",
+	"description": "Hot memory access library for Haxe",
 	"contributors": [
 		"eliasku"
 	],
-	"releasenote": "Initial release",
+	"releasenote": "check bounds",
 	"version": "0.0.2",
 	"url": "https://github.com/eliasku/hotmem"
 }
