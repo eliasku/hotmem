@@ -1,5 +1,13 @@
 # hotmem
 
+[![Build Status](https://travis-ci.org/eliasku/hotmem.svg?branch=develop)](https://travis-ci.org/eliasku/hotmem)
+[![Build status](https://ci.appveyor.com/api/projects/status/bu04g9dv5bikgfxp?svg=true)](https://ci.appveyor.com/project/eliasku/hotmem)
+
+[![Lang](https://img.shields.io/badge/language-haxe-orange.svg)](http://haxe.org)
+[![Version](https://img.shields.io/badge/version-v0.0.2-green.svg)](https://github.com/eliasku/hotmem)
+[![Dependencies](https://img.shields.io/badge/dependencies-none-green.svg)](https://github.com/eliasku/hotmem/blob/master/haxelib.json)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](http://opensource.org/licenses/MIT)
+
 Hot memory access for Haxe
 
 ## Targets
