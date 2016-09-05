@@ -13,6 +13,12 @@ private typedef U16ArrayData = Int;
 @:unreflective
 abstract U16Array(U16ArrayData) from U16ArrayData to U16ArrayData {
 
+	#if (cs||java||cpp)
+	public inline static var NULL = null;
+	#else
+	public inline static var NULL:Int = 0;
+	#end
+
 	@:unreflective
 	public var length(get, never):Int;
 
@@ -35,8 +41,9 @@ abstract U16Array(U16ArrayData) from U16ArrayData to U16ArrayData {
 		__checkValid();
 #end
 
-#if (js || flash)
+#if (js||flash)
 		@:privateAccess HotMemory.free(this #if js  << 1 #end);
+		this = 0;
 #elseif (cpp||java||cs)
 		this = null;
 #else

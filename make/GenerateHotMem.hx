@@ -1,10 +1,10 @@
 package ;
 
-import sys.FileSystem;
-import hxmake.cli.CL;
-import hxmake.Task;
-import sys.io.File;
 import haxe.Template;
+import hxmake.Task;
+import hxmake.cli.CL;
+import sys.FileSystem;
+import sys.io.File;
 
 class GenerateHotMem extends Task {
 
@@ -43,13 +43,13 @@ class GenerateHotMem extends Task {
 		];
 		var csTypes = [
 			"cs.StdTypes.UInt8",
-			"cs.StdTypes.UInt16",
+			"Int",
 			"Int",
 			"Single"
 		];
 		var javaTypes = [
-			"java.StdTypes.Int8",
-			"java.StdTypes.Int16",
+			"Int",//"java.StdTypes.Int8",
+			"Int",//"java.StdTypes.Int16",
 			"Int",
 			"Single"
 		];

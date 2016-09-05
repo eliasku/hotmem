@@ -1,7 +1,9 @@
+package ;
+
 import hxmake.test.TestTask;
 import hxmake.haxelib.HaxelibExt;
-import hxmake.idea.IdeaPlugin;
 import hxmake.haxelib.HaxelibPlugin;
+import hxmake.idea.IdeaPlugin;
 
 using hxmake.haxelib.HaxelibPlugin;
 
@@ -9,7 +11,7 @@ class HotMemMake extends hxmake.Module {
 
 	function new() {
 		config.classPath = ["src"];
-		config.testPath = ["test", "hotmem"];
+		config.testPath = ["test", "templates"];
 		config.devDependencies = [
 			"utest" => "haxelib"
 		];
@@ -29,12 +31,13 @@ class HotMemMake extends hxmake.Module {
 			ext.pack.includes = ["src", "haxelib.json", "README.md", "LICENSE"];
 		});
 
+		task("generate", new GenerateHotMem());
+
 		var tt = new TestTask();
 		tt.debug = true;
-		tt.targets = ["neko", "swf", "node", "js", "cpp", "java", "cs"];
-		tt.libraries = ["ecx"];
+		// TODO: "neko"
+		tt.targets = ["swf", "node", "js", "cpp", "java", "cs"];
+		tt.libraries = ["hotmem"];
 		task("test", tt);
-
-		task("generate", new GenerateHotMem());
 	}
 }

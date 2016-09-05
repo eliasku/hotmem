@@ -13,6 +13,12 @@ private typedef I32ArrayData = Int;
 @:unreflective
 abstract I32Array(I32ArrayData) from I32ArrayData to I32ArrayData {
 
+	#if (cs||java||cpp)
+	public inline static var NULL = null;
+	#else
+	public inline static var NULL:Int = 0;
+	#end
+
 	@:unreflective
 	public var length(get, never):Int;
 
@@ -35,8 +41,9 @@ abstract I32Array(I32ArrayData) from I32ArrayData to I32ArrayData {
 		__checkValid();
 #end
 
-#if (js || flash)
+#if (js||flash)
 		@:privateAccess HotMemory.free(this #if js  << 2 #end);
+		this = 0;
 #elseif (cpp||java||cs)
 		this = null;
 #else

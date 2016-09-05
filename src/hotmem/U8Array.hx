@@ -13,6 +13,12 @@ private typedef U8ArrayData = Int;
 @:unreflective
 abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 
+	#if (cs||java||cpp)
+	public inline static var NULL = null;
+	#else
+	public inline static var NULL:Int = 0;
+	#end
+
 	@:unreflective
 	public var length(get, never):Int;
 
@@ -35,8 +41,9 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 		__checkValid();
 #end
 
-#if (js || flash)
+#if (js||flash)
 		@:privateAccess HotMemory.free(this #if js  #end);
+		this = 0;
 #elseif (cpp||java||cs)
 		this = null;
 #else

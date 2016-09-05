@@ -13,6 +13,12 @@ private typedef ::TYPE::ArrayData = Int;
 @:unreflective
 abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::ArrayData {
 
+	#if (cs||java||cpp)
+	public inline static var NULL = null;
+	#else
+	public inline static var NULL:Int = 0;
+	#end
+
 	@:unreflective
 	public var length(get, never):Int;
 
@@ -35,8 +41,9 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 		__checkValid();
 #end
 
-#if (js || flash)
+#if (js||flash)
 		@:privateAccess HotMemory.free(this #if js ::EXPR_LEFT_SHIFT:: #end);
+		this = 0;
 #elseif (cpp||java||cs)
 		this = null;
 #else
