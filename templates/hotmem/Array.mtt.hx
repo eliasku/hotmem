@@ -2,6 +2,8 @@ package hotmem;
 
 #if cpp
 private typedef ::TYPE::ArrayData = haxe.io.BytesData;
+//#elseif java
+//private typedef ::TYPE::ArrayData = haxe.io.BytesData;
 #elseif cs
 private typedef ::TYPE::ArrayData = cs.NativeArray<::TYPE::>;
 #elseif java
@@ -14,13 +16,22 @@ private typedef ::TYPE::ArrayData = Int;
 abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::ArrayData {
 
 	#if (cs||java||cpp)
-	public inline static var NULL = null;
+	public inline static var NULL:::TYPE::ArrayData = null;
 	#else
 	public inline static var NULL:Int = 0;
 	#end
 
 	@:unreflective
 	public var length(get, never):Int;
+
+	@:unreflective
+	public var bytesLength(get, never):Int;
+
+	@:unreflective
+	public var bytesOffset(get, never):Int;
+
+	@:unreflective
+	public var bytesData(get, never):haxe.io.BytesData;
 
 	@:unreflective
 	inline public function new(length:Int) {
@@ -31,6 +42,7 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 		cpp.NativeArray.setSize(this, length::EXPR_LEFT_SHIFT::);
 #elseif java
 		this = new java.NativeArray(length);
+		//this = new haxe.io.BytesData(length::EXPR_LEFT_SHIFT::);
 #elseif cs
 		this = new cs.NativeArray(length);
 #end
@@ -64,7 +76,10 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 		HotMemory.set::TYPE::elem(index + this, element);
 #elseif cpp
 		untyped __cpp__("((::CPP_POINTER_TYPE::){0}->GetBase())[{1}] = {2}", this, index, element);
-#elseif (java||cs)
+#elseif java
+		//return JavaUnsafe.UNSAFE.::JAVA_UNSAFE_SET::(this, JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + (index::EXPR_LEFT_SHIFT::), element);
+		this[index] = element;
+#elseif cs
 		this[index] = element;
 #end
 	}
@@ -82,7 +97,10 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 		return HotMemory.get::TYPE::elem(index + this);
 #elseif cpp
 		return untyped __cpp__("((::CPP_POINTER_TYPE::){0}->GetBase())[{1}]", this, index);
-#elseif (java||cs)
+#elseif java
+		//return untyped __java__("hotmem.JavaUnsafe.UNSAFE.::JAVA_UNSAFE_GET::({0}, hotmem.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + ({1}::EXPR_LEFT_SHIFT::))", this, index)::JAVA_UNSAFE_GET_BIT_AND::;
+		return this[index];
+#elseif cs
 		return this[index];
 #else
 		return 0;
@@ -91,20 +109,61 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 
 	@:unreflective
 	inline function get_length():Int {
+		return bytesLength::EXPR_RIGHT_SHIFT::;
+	}
+
+	@:unreflective
+	inline function get_bytesLength():Int {
+#if hotmem_debug
+		__checkValid();
+#end
+
+#if (flash||js)
+		return HotMemory.getI32(bytesOffset - 4);
+#elseif cpp
+		return this.length;
+#elseif java
+		//return this.length;
+		return this.length::EXPR_LEFT_SHIFT::;
+#elseif cs
+		// TODO:
+		return this.length::EXPR_LEFT_SHIFT::;
+#else
+		return 0;
+#end
+	}
+
+	@:unreflective
+	inline function get_bytesOffset():Int {
 #if hotmem_debug
 		__checkValid();
 #end
 
 #if flash
-		return HotMemory.getI32(this - 4)::EXPR_RIGHT_SHIFT::;
+		return this;
 #elseif js
-		return HotMemory.getI32((this::EXPR_LEFT_SHIFT::) - 4)::EXPR_RIGHT_SHIFT::;
-#elseif cpp
-		return this.length::EXPR_RIGHT_SHIFT::;
-#elseif (java||cs)
-		return this.length;
+		return this::EXPR_LEFT_SHIFT::;
 #else
 		return 0;
+#end
+	// TODO: cs
+	}
+
+	@:unreflective
+	inline function get_bytesData():haxe.io.BytesData {
+#if hotmem_debug
+		__checkValid();
+#end
+
+#if (js||flash)
+		return HotMemory.bytes.getData();
+#elseif cpp
+		return this;
+//#elseif java
+//		return this;
+#else
+		return null;
+		//TODO: java & cs
 #end
 	}
 
@@ -131,11 +190,7 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 	}
 
 	function __checkValid() {
-#if (js||cs||java||cpp)
-		if(this == null) throw "Array is not created";
-#else
-		if(this == 0) throw "Array is not created";
-#end
+		if(this == NULL) throw "Array is not created";
 	}
 #end
 }

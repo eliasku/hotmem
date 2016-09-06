@@ -2,6 +2,8 @@ package hotmem;
 
 #if cpp
 private typedef U8ArrayData = haxe.io.BytesData;
+//#elseif java
+//private typedef U8ArrayData = haxe.io.BytesData;
 #elseif cs
 private typedef U8ArrayData = cs.NativeArray<U8>;
 #elseif java
@@ -14,13 +16,22 @@ private typedef U8ArrayData = Int;
 abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 
 	#if (cs||java||cpp)
-	public inline static var NULL = null;
+	public inline static var NULL:U8ArrayData = null;
 	#else
 	public inline static var NULL:Int = 0;
 	#end
 
 	@:unreflective
 	public var length(get, never):Int;
+
+	@:unreflective
+	public var bytesLength(get, never):Int;
+
+	@:unreflective
+	public var bytesOffset(get, never):Int;
+
+	@:unreflective
+	public var bytesData(get, never):haxe.io.BytesData;
 
 	@:unreflective
 	inline public function new(length:Int) {
@@ -31,6 +42,7 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 		cpp.NativeArray.setSize(this, length);
 #elseif java
 		this = new java.NativeArray(length);
+		//this = new haxe.io.BytesData(length);
 #elseif cs
 		this = new cs.NativeArray(length);
 #end
@@ -64,7 +76,10 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 		HotMemory.setU8elem(index + this, element);
 #elseif cpp
 		untyped __cpp__("((cpp::UInt8*){0}->GetBase())[{1}] = {2}", this, index, element);
-#elseif (java||cs)
+#elseif java
+		//return JavaUnsafe.UNSAFE.putByte(this, JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + (index), element);
+		this[index] = element;
+#elseif cs
 		this[index] = element;
 #end
 	}
@@ -82,7 +97,10 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 		return HotMemory.getU8elem(index + this);
 #elseif cpp
 		return untyped __cpp__("((cpp::UInt8*){0}->GetBase())[{1}]", this, index);
-#elseif (java||cs)
+#elseif java
+		//return untyped __java__("hotmem.JavaUnsafe.UNSAFE.getByte({0}, hotmem.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + ({1}))", this, index)& 0xFF;
+		return this[index];
+#elseif cs
 		return this[index];
 #else
 		return 0;
@@ -91,20 +109,61 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 
 	@:unreflective
 	inline function get_length():Int {
+		return bytesLength;
+	}
+
+	@:unreflective
+	inline function get_bytesLength():Int {
+#if hotmem_debug
+		__checkValid();
+#end
+
+#if (flash||js)
+		return HotMemory.getI32(bytesOffset - 4);
+#elseif cpp
+		return this.length;
+#elseif java
+		//return this.length;
+		return this.length;
+#elseif cs
+		// TODO:
+		return this.length;
+#else
+		return 0;
+#end
+	}
+
+	@:unreflective
+	inline function get_bytesOffset():Int {
 #if hotmem_debug
 		__checkValid();
 #end
 
 #if flash
-		return HotMemory.getI32(this - 4);
+		return this;
 #elseif js
-		return HotMemory.getI32((this) - 4);
-#elseif cpp
-		return this.length;
-#elseif (java||cs)
-		return this.length;
+		return this;
 #else
 		return 0;
+#end
+	// TODO: cs
+	}
+
+	@:unreflective
+	inline function get_bytesData():haxe.io.BytesData {
+#if hotmem_debug
+		__checkValid();
+#end
+
+#if (js||flash)
+		return HotMemory.bytes.getData();
+#elseif cpp
+		return this;
+//#elseif java
+//		return this;
+#else
+		return null;
+		//TODO: java & cs
 #end
 	}
 
@@ -129,11 +188,7 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 	}
 
 	function __checkValid() {
-#if (js||cs||java||cpp)
-		if(this == null) throw "Array is not created";
-#else
-		if(this == 0) throw "Array is not created";
-#end
+		if(this == NULL) throw "Array is not created";
 	}
 #end
 }

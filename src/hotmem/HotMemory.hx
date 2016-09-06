@@ -6,7 +6,7 @@ import haxe.io.Bytes;
 @:unreflective
 class HotMemory {
 
-	static inline var DEFAULT_MAX_SIZE:Int = 100;
+	static inline var MIN_SIZE_BYTES:Int = 4 * 1024 * 1024;
 
 #if js
 	static function __init__() {
@@ -28,24 +28,53 @@ class HotMemory {
 	static var _nextLocation:Int = 0;
 	static var _freeStart:Array<Int> = [];
 	static var _freeLength:Array<Int> = [];
-#end
 
-	static public function initialize(maxMb:Int = 0) {
-		size = (maxMb > 0 ? maxMb : DEFAULT_MAX_SIZE) * 1000 * 1000;
+#end
+	static var _requiredBytesLength:Int = 0;
+
+	static public function require(sizeMb:Int) {
+		var bytesLength = sizeMb * 1000 * 1000;
+		_requiredBytesLength += bytesLength;
+	}
+
+	static function ensure(bytesLength:Int) {
+		if(bytesLength >= size) {
+			grow(bytesLength);
+		}
+	}
+
+	static function grow(bytesLength:Int) {
+		if(bytesLength < MIN_SIZE_BYTES) {
+			bytesLength = MIN_SIZE_BYTES;
+		}
+		if(bytesLength < _requiredBytesLength) {
+			bytesLength = _requiredBytesLength;
+		}
+		if(bytesLength & 0x3 != 0) {
+			bytesLength = (bytesLength + 4) & (~0x3);
+		}
 #if flash
-		bytes = haxe.io.Bytes.alloc(size);
+		var old = bytes;
+		bytes = haxe.io.Bytes.alloc(bytesLength);
+		if(old != null) {
+			bytes.blit(0, old, 0, old.length);
+		}
 		U8 = bytes.getData();
 		restore();
 #elseif js
-		var baseBuffer = new js.html.Uint8Array(size);
+		var old = bytes;
+		var baseBuffer = new js.html.Uint8Array(bytesLength);
 		untyped __js__("HOT_U8 = {0};", baseBuffer);
 		untyped __js__("HOT_F32 = new Float32Array(HOT_U8.buffer)");
 		untyped __js__("HOT_I32 = new Int32Array(HOT_U8.buffer)");
 		untyped __js__("HOT_U16 = new Uint16Array(HOT_U8.buffer);");
 		bytes = Bytes.ofData(baseBuffer.buffer);
+		if(old != null) {
+			bytes.blit(0, old, 0, old.length);
+		}
 #end
+		size = bytesLength;
 	}
-
 
 	/** Restore hot memory access **/
 	@:extern inline static public function restore() {
@@ -58,8 +87,8 @@ class HotMemory {
 	/** Allocate hot memory range of size `bytesLength` **/
 	static function alloc(bytesLength:Int):Int {
 		var bufferLocation = _nextLocation;
-
 		var bytesOffset = bufferLocation + 4;
+		ensure(bytesOffset + bytesLength);
 		setI32(bufferLocation, bytesLength);
 		_nextLocation = bytesOffset + bytesLength;
 		if(_nextLocation & 0x3 != 0) {

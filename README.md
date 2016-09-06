@@ -25,11 +25,6 @@ Define `-D hotmem_debug` enabling bounds checking, traces and additional asserts
 
 ## Usage
 
-Initialize HotMemory storage just for all targets generalization (could be improved later)
-```
-HotMemory.initialize(sizeInMb);
-```
-
 Create your static dense fixed-length typed arrays before performance critical operations.
 
 Use `HotView` if different value-type access required
@@ -73,8 +68,9 @@ value = view.getF32(bytePosition);
 
 ## TODO:
 
-- Tests + CI
+- More tests
 - NodeJS implementation
+- Flash memory-domain auto-restoring
 - Types: I8, I16, U32, F64
 - Java / CS implementation and memory view
 - General fallback for other dynamic targets (`macro` as well)

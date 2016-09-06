@@ -69,6 +69,9 @@ class GenerateHotMem extends Task {
 		var flash_set = ["setByte", "setI16", "setI32", "setFloat"];
 		var amsjs_reg_prefix = ["", "", "", "+"];
 		var amsjs_reg_postfix = ["|0", "|0", "|0", ""];
+		var java_get = ["getByte", "getShort", "getInt", "getFloat"];
+		var java_set = ["putByte", "putShort", "putInt", "putFloat"];
+		var java_get_post_conv = ["& 0xFF", "& 0xFFFF", "", ""];
 
 		var typesContext = { TYPES: [] };
 		for(i in 0...types.length) {
@@ -81,6 +84,9 @@ class GenerateHotMem extends Task {
 				SIZE: size,
 				FLASH_MEM_SET: flash_set[i],
 				FLASH_MEM_GET: flash_get[i],
+				JAVA_UNSAFE_GET_BIT_AND: java_get_post_conv[i],
+				JAVA_UNSAFE_GET: java_get[i],
+				JAVA_UNSAFE_SET: java_set[i],
 				POST_ASMJS: amsjs_reg_postfix[i],
 				PRE_ASMJS: amsjs_reg_prefix[i],
 				TYPE: typeName,
