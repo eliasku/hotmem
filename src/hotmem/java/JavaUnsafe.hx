@@ -1,4 +1,4 @@
-package hotmem;
+package hotmem.java;
 
 #if java
 

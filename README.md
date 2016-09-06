@@ -74,3 +74,4 @@ value = view.getF32(bytePosition);
 - Types: I8, I16, U32, F64
 - Java / CS implementation and memory view
 - General fallback for other dynamic targets (`macro` as well)
+- Document BytesView / lock / unlock flow

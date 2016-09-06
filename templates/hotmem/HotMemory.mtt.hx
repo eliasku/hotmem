@@ -1,5 +1,7 @@
 package hotmem;
 
+import hotmem.js.JsBytesView;
+import haxe.io.BytesData;
 import haxe.io.Bytes;
 
 @:final
@@ -8,10 +10,51 @@ class HotMemory {
 
 	static inline var MIN_SIZE_BYTES:Int = 4 * 1024 * 1024;
 
+	/** BytesView functionality **/
+	static var _viewStack:Array<BytesData> = [];
+	static var _viewCurrent:BytesData;
+
+	public static function lock(data:BytesData):BytesView {
+		_viewStack.push(data);
+		return selectView(data);
+	}
+
+	public static function unlock():BytesView {
+		_viewStack.pop();
+		var top = _viewStack.length > 0 ? _viewStack[_viewStack.length - 1] : null;
+		if(top != null) {
+			selectView(_viewCurrent);
+		}
+		else {
+			restore();
+		}
+		return BytesView.NULL;
+	}
+
+	static function selectView(data:BytesData):BytesView {
+#if cpp
+		return new BytesView(data);
+#elseif js
+		_bytesView.data = data;
+		return new BytesView(_bytesView);
+#elseif flash
+		data.endian = flash.utils.Endian.LITTLE_ENDIAN;
+		if(data.length < 1024) {
+			data.length = 1024;
+		}
+		flash.system.ApplicationDomain.currentDomain.domainMemory = data;
+		return new BytesView(0);
+#else
+		return new BytesView(0);
+#end
+	}
+
+
 #if js
 	static function __init__() {
 		untyped __js__("var HOT_U8, HOT_U16, HOT_I32, HOT_F32");
 	}
+	static var _bytesView:JsBytesView = new JsBytesView();
 #end
 
 #if flash
