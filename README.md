@@ -83,7 +83,6 @@ For platform-specific fast memory access to the `haxe.io.BytesData` content.
 
 - More tests
 - Missing types: I8, I16, U32, F64
-- C# / NodeJS implementation
-- General fallback for other dynamic targets (`macro` as well)
-- More documentation on BytesView / lock / unlock flow
+- NodeJS buffers implementation
+- More documentation on HotBytes (lock / unlock flow)
 - Dox documentation
