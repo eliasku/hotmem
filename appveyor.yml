@@ -6,7 +6,7 @@ environment:
   matrix:
     - TARGET: flash,js,node
     - TARGET: cpp
-    - TARGET: java,cs
+    - TARGET: neko,java,cs
 
 matrix:
   fast_finish: true

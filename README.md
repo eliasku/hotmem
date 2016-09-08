@@ -22,7 +22,7 @@ Created to provide significantly boosted performance for typed arrays. Reduce am
 | nodejs | +     | +          | +        | Parallel Typed Arrays* |
 | cs     | +     | +          | +        | NativeArray_T / Unsafe |
 | java   | +     | +          | +        | NativeArray_T / Unsafe |
-| neko   | +     | +          | +        | NativeArray_T / String |
+| neko   | +     | -          | +        | NativeArray_T / String |
 
 Define `-D hotmem_debug` enabling bounds checking, traces and additional asserts
 

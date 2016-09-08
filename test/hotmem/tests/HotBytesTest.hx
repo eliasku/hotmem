@@ -7,7 +7,6 @@ class HotBytesTest {
 
 	public function new() {}
 
-#if (js||flash||macro||neko||cpp||java||cs)
 	public function testBytesView() {
 		var bytes = Bytes.alloc(100);
 		var view = HotMemory.lock(bytes.getData());
@@ -29,9 +28,4 @@ class HotBytesTest {
 
 		HotMemory.unlock();
 	}
-#else
-	public function testPass() {
-		Assert.pass();
-	}
-#end
 }

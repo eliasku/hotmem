@@ -19,7 +19,7 @@ env:
     matrix:
     - TARGET=flash,js,node
     - TARGET=cpp
-    - TARGET=cs,java
+    - TARGET=neko,cs,java
 
 matrix:
   allow_failures:

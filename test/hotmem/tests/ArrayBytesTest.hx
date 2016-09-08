@@ -6,7 +6,11 @@ class ArrayBytesTest {
 
 	public function new() {}
 
-#if (js||flash||cpp||java||cs)
+#if (neko||macro)
+	public function testPass() {
+		Assert.pass();
+	}
+#else
 	public function testArrayBytes() {
 		var data = new I32Array(20);
 		var bytes = data.getArrayBytes();
@@ -26,9 +30,6 @@ class ArrayBytesTest {
 		Assert.equals(3, bytes.getU8(3));
 		Assert.equals(77, bytes.getU8(77));
 	}
-#else
-	public function testPass() {
-		Assert.pass();
-	}
 #end
+
 }
