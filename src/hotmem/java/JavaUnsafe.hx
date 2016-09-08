@@ -8,6 +8,7 @@ import java.NativeArray;
 import java.lang.reflect.Field;
 import java.lang.Long;
 
+@:keep
 @:classCode('
  public static sun.misc.Unsafe UNSAFE;
 

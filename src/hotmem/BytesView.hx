@@ -1,5 +1,9 @@
 package hotmem;
 
+#if java
+import hotmem.java.JavaUnsafe;
+#end
+
 #if js
 private typedef BytesViewData = hotmem.js.JsBytesView;
 #elseif flash
@@ -37,6 +41,10 @@ abstract BytesView(BytesViewData) {
 		this.setF32(address, value);
 #elseif flash
 		flash.Memory.setFloat(address, value);
+#elseif (neko||macro)
+		untyped __dollar__ssetf(this, address, value, false);
+#elseif java
+		untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.putFloat({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1}, (float){2})", this, address, value);
 #end
 	}
 
@@ -47,6 +55,10 @@ abstract BytesView(BytesViewData) {
 		this.setU32(address, value);
 #elseif flash
 		flash.Memory.setI32(address, value);
+#elseif (neko||macro)
+		untyped __dollar__sset32(this, address, value, false);
+#elseif java
+		untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.putInt({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1}, {2})", this, address, value);
 #end
 	}
 
@@ -57,6 +69,10 @@ abstract BytesView(BytesViewData) {
 		this.setU16(address, value);
 #elseif flash
 		flash.Memory.setI16(address, value);
+#elseif (neko||macro)
+		untyped __dollar__sset16(this, address, value, false);
+#elseif java
+		untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.putShort({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1}, (short){2})", this, address, value);
 #end
 	}
 
@@ -67,6 +83,10 @@ abstract BytesView(BytesViewData) {
 		this.setU8(address, value);
 #elseif flash
 		flash.Memory.setByte(address, value);
+#elseif (neko||macro)
+		untyped __dollar__sset(this, address, value);
+#elseif java
+		untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.putByte({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1}, (byte){2})", this, address, value);
 #end
 	}
 
@@ -77,6 +97,10 @@ abstract BytesView(BytesViewData) {
 		return this.getF32(address);
 #elseif flash
 		return flash.Memory.getFloat(address);
+#elseif (neko||macro)
+		return untyped __dollar__sgetf(this, address, false);
+#elseif java
+		return untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.getFloat({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1})", this, address);
 #else
 		return 0;
 #end
@@ -89,6 +113,10 @@ abstract BytesView(BytesViewData) {
 		return this.getU32(address);
 #elseif flash
 		return flash.Memory.getI32(address);
+#elseif (neko||macro)
+		return untyped __dollar__sget32(this, address, false);
+#elseif java
+		return untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.getInt({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1}) & 0xFFFFFFFF", this, address);
 #else
 		return 0;
 #end
@@ -101,6 +129,10 @@ abstract BytesView(BytesViewData) {
 		return this.getU16(address);
 #elseif flash
 		return flash.Memory.getUI16(address);
+#elseif (neko||macro)
+		return untyped __dollar__sget16(this, address, false);
+#elseif java
+		return untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.getShort({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1}) & 0xFFFF", this, address);
 #else
 		return 0;
 #end
@@ -113,6 +145,10 @@ abstract BytesView(BytesViewData) {
 		return this.getU8(address);
 #elseif flash
 		return flash.Memory.getByte(address);
+#elseif (neko||macro)
+		return untyped __dollar__sget(this, address);
+#elseif java
+		return untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.getByte({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1})", this, address);
 #else
 		return 0;
 #end

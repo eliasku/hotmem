@@ -46,7 +46,6 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 		this = neko.NativeArray.alloc(length);
 #elseif java
 		this = new java.NativeArray(length);
-		//this = new haxe.io.BytesData(length);
 #elseif cs
 		this = new cs.NativeArray(length);
 #end
@@ -81,7 +80,6 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 #elseif cpp
 		untyped __cpp__("((cpp::UInt8*){0}->GetBase())[{1}] = {2}", this, index, element);
 #elseif java
-		//return JavaUnsafe.UNSAFE.putByte(this, JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + (index), element);
 		this[index] = element;
 #elseif cs
 		this[index] = element;
@@ -104,7 +102,6 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 #elseif cpp
 		return untyped __cpp__("((cpp::UInt8*){0}->GetBase())[{1}]", this, index);
 #elseif java
-		//return untyped __java__("hotmem.JavaUnsafe.UNSAFE.getByte({0}, hotmem.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + ({1}))", this, index)& 0xFF;
 		return this[index];
 #elseif cs
 		return this[index];
@@ -182,17 +179,16 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 #end
 	}
 
-#if (js||flash||cpp)
+#if (js||flash||cpp||java)
 	@:unreflective
 	@:access(hotmem.HotView)
-	inline public function view(atElement:Int = 0):HotView {
+	inline public function getArrayBytes():HotView {
 #if hotmem_debug
-		__checkBounds(atElement);
 		__checkValid();
 #end
 
 		
-		return new HotView(this, atElement);
+		return new HotView(this);
 		
 	}
 #end

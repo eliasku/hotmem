@@ -11,7 +11,7 @@ import js.html.Uint8Array;
 @:final
 class JsBytesView {
 
-	public var data(default, set):ArrayBuffer;
+	var data:ArrayBuffer;
 
 	var arrayByte:Uint8Array;
 	var arrayUShort:Uint16Array;
@@ -20,11 +20,10 @@ class JsBytesView {
 
 	public function new() {}
 
-	@:extern inline function set_data(value:ArrayBuffer):ArrayBuffer {
+	public function select(value:ArrayBuffer):JsBytesView {
 		if (data == value) {
-			return value;
+			return this;
 		}
-
 		if (value != null) {
 			arrayByte = new Uint8Array(value);
 			arrayUShort = new Uint16Array(value);
@@ -37,9 +36,8 @@ class JsBytesView {
 			arrayUInt = null;
 			arrayFloat = null;
 		}
-
 		data = value;
-		return value;
+		return this;
 	}
 
 	@:extern public inline function getU8(address:Int):Int {

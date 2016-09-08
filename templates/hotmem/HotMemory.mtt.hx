@@ -11,6 +11,7 @@ class HotMemory {
 	static inline var MIN_SIZE_BYTES:Int = 4 * 1024 * 1024;
 
 	/** BytesView functionality **/
+#if flash
 	static var _viewStack:Array<BytesData> = [];
 	static var _viewCurrent:BytesData;
 
@@ -20,6 +21,7 @@ class HotMemory {
 	}
 
 	public static function unlock():BytesView {
+		#if flash
 		_viewStack.pop();
 		var top = _viewStack.length > 0 ? _viewStack[_viewStack.length - 1] : null;
 		if(top != null) {
@@ -28,27 +30,33 @@ class HotMemory {
 		else {
 			restore();
 		}
+		#end
 		return BytesView.NULL;
 	}
 
 	static function selectView(data:BytesData):BytesView {
-#if cpp
-		return new BytesView(data);
-#elseif js
-		_bytesView.data = data;
-		return new BytesView(_bytesView);
-#elseif flash
 		data.endian = flash.utils.Endian.LITTLE_ENDIAN;
 		if(data.length < 1024) {
 			data.length = 1024;
 		}
 		flash.system.ApplicationDomain.currentDomain.domainMemory = data;
 		return new BytesView(0);
+	}
 #else
+	inline public static function lock(data:BytesData):BytesView {
+	#if (cpp||neko||macro||java)
+		return new BytesView(data);
+	#elseif js
+		return new BytesView(_bytesView.select(data));
+	#else
 		return new BytesView(0);
-#end
+	#end
 	}
 
+	inline public static function unlock():BytesView {
+		return BytesView.NULL;
+	}
+#end
 
 #if js
 	static function __init__() {

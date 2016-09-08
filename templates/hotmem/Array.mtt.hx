@@ -46,7 +46,6 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 		this = neko.NativeArray.alloc(length);
 #elseif java
 		this = new java.NativeArray(length);
-		//this = new haxe.io.BytesData(length::EXPR_LEFT_SHIFT::);
 #elseif cs
 		this = new cs.NativeArray(length);
 #end
@@ -81,7 +80,6 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 #elseif cpp
 		untyped __cpp__("((::CPP_POINTER_TYPE::){0}->GetBase())[{1}] = {2}", this, index, element);
 #elseif java
-		//return JavaUnsafe.UNSAFE.::JAVA_UNSAFE_SET::(this, JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + (index::EXPR_LEFT_SHIFT::), element);
 		this[index] = element;
 #elseif cs
 		this[index] = element;
@@ -104,7 +102,6 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 #elseif cpp
 		return untyped __cpp__("((::CPP_POINTER_TYPE::){0}->GetBase())[{1}]", this, index);
 #elseif java
-		//return untyped __java__("hotmem.JavaUnsafe.UNSAFE.::JAVA_UNSAFE_GET::({0}, hotmem.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + ({1}::EXPR_LEFT_SHIFT::))", this, index)::JAVA_UNSAFE_GET_BIT_AND::;
 		return this[index];
 #elseif cs
 		return this[index];
@@ -182,19 +179,18 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 #end
 	}
 
-#if (js||flash||cpp)
+#if (js||flash||cpp||java)
 	@:unreflective
 	@:access(hotmem.HotView)
-	inline public function view(atElement:Int = 0):HotView {
+	inline public function getArrayBytes():HotView {
 #if hotmem_debug
-		__checkBounds(atElement);
 		__checkValid();
 #end
 
 		::if (EL_SHIFT > 0)::
-		return new HotView(this #if js ::EXPR_LEFT_SHIFT:: #end, atElement::EXPR_LEFT_SHIFT::);
+		return new HotView(this #if js ::EXPR_LEFT_SHIFT:: #end);
 		::else::
-		return new HotView(this, atElement);
+		return new HotView(this);
 		::end::
 	}
 #end

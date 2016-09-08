@@ -12,15 +12,15 @@ Hot memory access for Haxe
 
 ## Targets
 
-| Target | Arrays | Hot View | Bytes View | Implementation         |
-| ------ | ------:| :-------:| ----------:| ----------------------:|
-| cpp    | +        | +      | +          | hxcpp_memory / pointer |
-| flash  | +        | +      | +          | Memory Domain          |
-| js     | +        | +      | +          | Parallel Typed Arrays  |
-| nodejs | +        | +      | +          | Parallel Typed Arrays* |
-| cs     | +        | -      | -          | NativeArray            |
-| java   | +        | -      | -          | NativeArray            |
-| neko   | +        | -      | -          | neko build-in          |
+| Target | Arrays | Array Bytes | Hot Bytes | Implementation         |
+| ------ | ------:| :----------:| ---------:| ----------------------:|
+| cpp    | +      | +           | +         | hxcpp_memory / pointer |
+| flash  | +      | +           | +         | Memory Domain          |
+| js     | +      | +           | +         | Parallel Typed Arrays  |
+| nodejs | +      | +           | +         | Parallel Typed Arrays* |
+| cs     | +      | -           | -         | NativeArray            |
+| java   | +      | +           | +         | NativeArray / Unsafe   |
+| neko   | +      | +           | +         | NativeArray / String   |
 
 Define `-D hotmem_debug` enabling bounds checking, traces and additional asserts
 
