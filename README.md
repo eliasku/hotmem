@@ -12,14 +12,14 @@ Hot memory access for Haxe
 
 ## Targets
 
-| Target | Data View | Require preallocation | Implementation         |
-| ------ |:---------:| ---------------------:| ----------------------:|
-| cpp    | +         | -                     | hxcpp_memory           |
-| flash  | +         | +                     | Memory Domain          |
-| js     | +         | +                     | Parallel Typed Arrays  |
-| nodejs | +         | +                     | Parallel Typed Arrays* |
-| cs     | -         | -                     | NativeArray            |
-| java   | -         | -                     | NativeArray            |
+| Target | Arrays | Hot View | Bytes View | Implementation         |
+| ------ | ------:| :-------:| ----------:| ----------------------:|
+| cpp    | +        | +      | +          | hxcpp_memory / pointer |
+| flash  | +        | +      | +          | Memory Domain          |
+| js     | +        | +      | +          | Parallel Typed Arrays  |
+| nodejs | +        | +      | +          | Parallel Typed Arrays* |
+| cs     | +        | -      | -          | NativeArray            |
+| java   | +        | -      | -          | NativeArray            |
 
 Define `-D hotmem_debug` enabling bounds checking, traces and additional asserts
 
@@ -45,7 +45,7 @@ For each types continuous memory fixed-length array is available (buffer)
 - `hotmem.I32Array`: 32-bit signed int array
 - `hotmem.F32Array`: 32-bit floating-point array
 
-## Data View
+## Hot View
 
 Each array could be wrapped for memory read/write operations:
 
@@ -62,6 +62,10 @@ value = view.getI32(bytePosition);
 value = view.getF32(bytePosition);
 ```
 
+## Data View
+
+As Hot-View you able to `lock` any `haxe.io.BytesData`:
+
 ## Modify templates and generate the code
 
 `$hotmem> haxelib run hxmake generate`
@@ -70,8 +74,8 @@ value = view.getF32(bytePosition);
 
 - More tests
 - NodeJS implementation
-- Flash memory-domain auto-restoring
 - Types: I8, I16, U32, F64
-- Java / CS implementation and memory view
+- Java / CS implementation for hot/bytes view
 - General fallback for other dynamic targets (`macro` as well)
-- Document BytesView / lock / unlock flow
+- More documentation on BytesView / lock / unlock flow
+- Dox documentation
