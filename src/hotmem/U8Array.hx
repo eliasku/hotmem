@@ -2,6 +2,8 @@ package hotmem;
 
 #if cpp
 private typedef U8ArrayData = haxe.io.BytesData;
+#elseif (neko||macro)
+private typedef U8ArrayData = neko.NativeArray<U8>;
 //#elseif java
 //private typedef U8ArrayData = haxe.io.BytesData;
 #elseif cs
@@ -15,7 +17,7 @@ private typedef U8ArrayData = Int;
 @:unreflective
 abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 
-	#if (cs||java||cpp)
+	#if (cs||java||cpp||neko||macro)
 	public inline static var NULL:U8ArrayData = null;
 	#else
 	public inline static var NULL:Int = 0;
@@ -35,11 +37,13 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 
 	@:unreflective
 	inline public function new(length:Int) {
-#if (flash || js)
+#if (flash||js)
 		this = @:privateAccess HotMemory.alloc(length) ;
 #elseif cpp
 		this = new haxe.io.BytesData();
 		cpp.NativeArray.setSize(this, length);
+#elseif (macro||neko)
+		this = neko.NativeArray.alloc(length);
 #elseif java
 		this = new java.NativeArray(length);
 		//this = new haxe.io.BytesData(length);
@@ -56,7 +60,7 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 #if (js||flash)
 		@:privateAccess HotMemory.free(this #if js  #end);
 		this = 0;
-#elseif (cpp||java||cs)
+#elseif (cpp||java||cs||macro||neko)
 		this = null;
 #else
 		this = 0;
@@ -81,6 +85,8 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 		this[index] = element;
 #elseif cs
 		this[index] = element;
+#elseif (neko||macro)
+		this[index] = element;
 #end
 	}
 
@@ -102,6 +108,8 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 		return this[index];
 #elseif cs
 		return this[index];
+#elseif (neko||macro)
+		return this[index];
 #else
 		return 0;
 #end
@@ -109,7 +117,13 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 
 	@:unreflective
 	inline function get_length():Int {
+#if (java||cs)
+		return this.length;
+#elseif (neko||macro)
+		return neko.NativeArray.length(this);
+#else
 		return bytesLength;
+#end
 	}
 
 	@:unreflective
@@ -126,8 +140,9 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 		//return this.length;
 		return this.length;
 #elseif cs
-		// TODO:
 		return this.length;
+#elseif (neko||macro)
+		return length;
 #else
 		return 0;
 #end

@@ -36,7 +36,7 @@ class HotMemMake extends hxmake.Module {
 		var tt = new TestTask();
 		tt.debug = true;
 		// TODO: "neko"
-		tt.targets = ["swf", "node", "js", "cpp", "java", "cs"];
+		tt.targets = ["neko", "swf", "node", "js", "cpp", "java", "cs"];
 		tt.libraries = ["hotmem"];
 		task("test", tt);
 	}

@@ -1,6 +1,6 @@
 package hotmem;
 
-#if (flash||js)
+#if (flash||js||neko)
 typedef U8 = Int;
 #elseif java
 typedef U8 = Int;

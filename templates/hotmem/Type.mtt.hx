@@ -1,6 +1,6 @@
 package hotmem;
 
-#if (flash||js)
+#if (flash||js||neko)
 typedef ::TYPE:: = ::GENERIC_TYPE::;
 #elseif java
 typedef ::TYPE:: = ::JAVA_TYPE::;

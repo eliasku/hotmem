@@ -2,6 +2,8 @@ package hotmem;
 
 #if cpp
 private typedef U16ArrayData = haxe.io.BytesData;
+#elseif (neko||macro)
+private typedef U16ArrayData = neko.NativeArray<U16>;
 //#elseif java
 //private typedef U16ArrayData = haxe.io.BytesData;
 #elseif cs
@@ -15,7 +17,7 @@ private typedef U16ArrayData = Int;
 @:unreflective
 abstract U16Array(U16ArrayData) from U16ArrayData to U16ArrayData {
 
-	#if (cs||java||cpp)
+	#if (cs||java||cpp||neko||macro)
 	public inline static var NULL:U16ArrayData = null;
 	#else
 	public inline static var NULL:Int = 0;
@@ -35,11 +37,13 @@ abstract U16Array(U16ArrayData) from U16ArrayData to U16ArrayData {
 
 	@:unreflective
 	inline public function new(length:Int) {
-#if (flash || js)
+#if (flash||js)
 		this = @:privateAccess HotMemory.alloc(length << 1) #if js  >> 1 #end;
 #elseif cpp
 		this = new haxe.io.BytesData();
 		cpp.NativeArray.setSize(this, length << 1);
+#elseif (macro||neko)
+		this = neko.NativeArray.alloc(length);
 #elseif java
 		this = new java.NativeArray(length);
 		//this = new haxe.io.BytesData(length << 1);
@@ -56,7 +60,7 @@ abstract U16Array(U16ArrayData) from U16ArrayData to U16ArrayData {
 #if (js||flash)
 		@:privateAccess HotMemory.free(this #if js  << 1 #end);
 		this = 0;
-#elseif (cpp||java||cs)
+#elseif (cpp||java||cs||macro||neko)
 		this = null;
 #else
 		this = 0;
@@ -81,6 +85,8 @@ abstract U16Array(U16ArrayData) from U16ArrayData to U16ArrayData {
 		this[index] = element;
 #elseif cs
 		this[index] = element;
+#elseif (neko||macro)
+		this[index] = element;
 #end
 	}
 
@@ -102,6 +108,8 @@ abstract U16Array(U16ArrayData) from U16ArrayData to U16ArrayData {
 		return this[index];
 #elseif cs
 		return this[index];
+#elseif (neko||macro)
+		return this[index];
 #else
 		return 0;
 #end
@@ -109,7 +117,13 @@ abstract U16Array(U16ArrayData) from U16ArrayData to U16ArrayData {
 
 	@:unreflective
 	inline function get_length():Int {
+#if (java||cs)
+		return this.length;
+#elseif (neko||macro)
+		return neko.NativeArray.length(this);
+#else
 		return bytesLength >> 1;
+#end
 	}
 
 	@:unreflective
@@ -126,8 +140,9 @@ abstract U16Array(U16ArrayData) from U16ArrayData to U16ArrayData {
 		//return this.length;
 		return this.length << 1;
 #elseif cs
-		// TODO:
 		return this.length << 1;
+#elseif (neko||macro)
+		return length << 1;
 #else
 		return 0;
 #end

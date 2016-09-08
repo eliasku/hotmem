@@ -20,6 +20,7 @@ Hot memory access for Haxe
 | nodejs | +        | +      | +          | Parallel Typed Arrays* |
 | cs     | +        | -      | -          | NativeArray            |
 | java   | +        | -      | -          | NativeArray            |
+| neko   | +        | -      | -          | neko build-in          |
 
 Define `-D hotmem_debug` enabling bounds checking, traces and additional asserts
 

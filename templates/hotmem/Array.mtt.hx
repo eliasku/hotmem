@@ -2,6 +2,8 @@ package hotmem;
 
 #if cpp
 private typedef ::TYPE::ArrayData = haxe.io.BytesData;
+#elseif (neko||macro)
+private typedef ::TYPE::ArrayData = neko.NativeArray<::TYPE::>;
 //#elseif java
 //private typedef ::TYPE::ArrayData = haxe.io.BytesData;
 #elseif cs
@@ -15,7 +17,7 @@ private typedef ::TYPE::ArrayData = Int;
 @:unreflective
 abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::ArrayData {
 
-	#if (cs||java||cpp)
+	#if (cs||java||cpp||neko||macro)
 	public inline static var NULL:::TYPE::ArrayData = null;
 	#else
 	public inline static var NULL:Int = 0;
@@ -35,11 +37,13 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 
 	@:unreflective
 	inline public function new(length:Int) {
-#if (flash || js)
+#if (flash||js)
 		this = @:privateAccess HotMemory.alloc(length::EXPR_LEFT_SHIFT::) ::if (EL_SHIFT > 0)::#if js ::EXPR_RIGHT_SHIFT:: #end::end::;
 #elseif cpp
 		this = new haxe.io.BytesData();
 		cpp.NativeArray.setSize(this, length::EXPR_LEFT_SHIFT::);
+#elseif (macro||neko)
+		this = neko.NativeArray.alloc(length);
 #elseif java
 		this = new java.NativeArray(length);
 		//this = new haxe.io.BytesData(length::EXPR_LEFT_SHIFT::);
@@ -56,7 +60,7 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 #if (js||flash)
 		@:privateAccess HotMemory.free(this #if js ::EXPR_LEFT_SHIFT:: #end);
 		this = 0;
-#elseif (cpp||java||cs)
+#elseif (cpp||java||cs||macro||neko)
 		this = null;
 #else
 		this = 0;
@@ -81,6 +85,8 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 		this[index] = element;
 #elseif cs
 		this[index] = element;
+#elseif (neko||macro)
+		this[index] = element;
 #end
 	}
 
@@ -102,6 +108,8 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 		return this[index];
 #elseif cs
 		return this[index];
+#elseif (neko||macro)
+		return this[index];
 #else
 		return 0;
 #end
@@ -109,7 +117,13 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 
 	@:unreflective
 	inline function get_length():Int {
+#if (java||cs)
+		return this.length;
+#elseif (neko||macro)
+		return neko.NativeArray.length(this);
+#else
 		return bytesLength::EXPR_RIGHT_SHIFT::;
+#end
 	}
 
 	@:unreflective
@@ -126,8 +140,9 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 		//return this.length;
 		return this.length::EXPR_LEFT_SHIFT::;
 #elseif cs
-		// TODO:
 		return this.length::EXPR_LEFT_SHIFT::;
+#elseif (neko||macro)
+		return length::EXPR_LEFT_SHIFT::;
 #else
 		return 0;
 #end
