@@ -13,7 +13,7 @@ abstract BytesView(BytesViewData) {
 #if flash
 	public inline static var NULL:BytesView = new BytesView(0);
 #else
-	public inline static var NULL:BytesView = new BytesView(null);
+	public inline static var NULL:BytesView = null;
 #end
 
 	inline public function new(data:BytesViewData) {

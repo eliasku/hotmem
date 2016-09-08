@@ -182,6 +182,10 @@ abstract U16Array(U16ArrayData) from U16ArrayData to U16ArrayData {
 	}
 #end
 
+	inline public function getObjectSize():Int {
+		return bytesLength + 4;
+	}
+
 #if hotmem_debug
 	function __checkBounds(index:Int) {
 		if(index < 0 || index >= length) throw 'index out of bounds [index: $index, length: $length]';
