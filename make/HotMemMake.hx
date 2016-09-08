@@ -20,7 +20,7 @@ class HotMemMake extends hxmake.Module {
 		apply(IdeaPlugin);
 
 		library(function(ext:HaxelibExt) {
-			ext.config.version = "0.0.2";
+			ext.config.version = "0.0.3";
 			ext.config.description = "Hot memory access library for Haxe";
 			ext.config.url = "https://github.com/eliasku/hotmem";
 			ext.config.tags = ["memory", "hot", "data", "array", "access", "primitive", "cross", "cache"];
