@@ -6,7 +6,7 @@ class ArrayBytesTest {
 
 	public function new() {}
 
-#if (js||flash||cpp||java)
+#if (js||flash||cpp||java||cs)
 	public function testArrayBytes() {
 		var data = new I32Array(20);
 		var bytes = data.getArrayBytes();

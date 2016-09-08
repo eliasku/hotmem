@@ -83,6 +83,7 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 		this[index] = element;
 #elseif cs
 		this[index] = element;
+		//hotmem.cs.UnsafeBytes.set::TYPE::(this, index::EXPR_LEFT_SHIFT::, element);
 #elseif (neko||macro)
 		this[index] = element;
 #end
@@ -105,6 +106,7 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 		return this[index];
 #elseif cs
 		return this[index];
+		//return hotmem.cs.UnsafeBytes.get::TYPE::(this, index::EXPR_LEFT_SHIFT::);
 #elseif (neko||macro)
 		return this[index];
 #else
@@ -158,7 +160,6 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 #else
 		return 0;
 #end
-	// TODO: cs
 	}
 
 	@:unreflective
@@ -171,15 +172,12 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 		return HotMemory.bytes.getData();
 #elseif cpp
 		return this;
-//#elseif java
-//		return this;
 #else
 		return null;
-		//TODO: java & cs
 #end
 	}
 
-#if (js||flash||cpp||java)
+#if (js||flash||cpp||java||cs)
 	@:unreflective
 	@:access(hotmem.ArrayBytes)
 	inline public function getArrayBytes():ArrayBytes {
@@ -187,11 +185,15 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 		__checkValid();
 #end
 
+#if cs
+		return new ArrayBytes(hotmem.cs.UnsafeBytes.getPtr(this));
+#else
 		::if (EL_SHIFT > 0)::
 		return new ArrayBytes(this #if js ::EXPR_LEFT_SHIFT:: #end);
 		::else::
 		return new ArrayBytes(this);
 		::end::
+#end
 	}
 #end
 

@@ -1,6 +1,10 @@
 package hotmem;
 
-#if (cpp||js||flash||java)
+#if (cpp||js||flash||java||cs)
+
+#if java
+import hotmem.java.JavaUnsafe;
+#end
 
 #if cpp
 private typedef ArrayBytesData = cpp.RawPointer<cpp.Char>;
@@ -8,11 +12,15 @@ private typedef ArrayBytesData = cpp.RawPointer<cpp.Char>;
 private typedef ArrayBytesData = Int;
 #elseif java
 private typedef ArrayBytesData = Dynamic;
+#elseif cs
+private typedef ArrayBytesData = cs.system.IntPtr;
 #end
 
 @:notNull
 @:structAccess
 @:unreflective
+@:nativeGen
+@:dce
 abstract ArrayBytes(ArrayBytesData) from ArrayBytesData to ArrayBytesData {
 
 #if cpp
@@ -21,8 +29,13 @@ abstract ArrayBytes(ArrayBytesData) from ArrayBytesData to ArrayBytesData {
 		this = untyped __cpp__("{0}->GetBase()", buffer);
 	}
 #elseif java
+
 	inline function new<T>(buffer:java.NativeArray<T>) {
 		this = buffer;
+	}
+#elseif cs
+	inline function new(ptr:cs.system.IntPtr) {
+		this = ptr;
 	}
 #elseif (flash||js)
 	inline function new(address:Int) {
@@ -39,6 +52,8 @@ abstract ArrayBytes(ArrayBytesData) from ArrayBytesData to ArrayBytesData {
 		untyped __cpp__("*((cpp::UInt8*)({0} + {1})) = {2}", this, address, value);
 #elseif java
 		untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.putByte({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1}, (byte){2})", this, address, value);
+#elseif cs
+		hotmem.cs.UnsafeBytes.psetU8(this, address, value);
 #end
 	}
 
@@ -50,6 +65,8 @@ abstract ArrayBytes(ArrayBytesData) from ArrayBytesData to ArrayBytesData {
 		return untyped __cpp__("*((cpp::UInt8*)({0} + {1}))", this, address);
 #elseif java
 		return untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.getByte({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1})& 0xFF", this, address);
+#elseif cs
+		return hotmem.cs.UnsafeBytes.pgetU8(this, address);
 #else
 		return 0;
 #end
@@ -63,6 +80,8 @@ abstract ArrayBytes(ArrayBytesData) from ArrayBytesData to ArrayBytesData {
 		untyped __cpp__("*((cpp::UInt16*)({0} + {1})) = {2}", this, address, value);
 #elseif java
 		untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.putShort({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1}, (short){2})", this, address, value);
+#elseif cs
+		hotmem.cs.UnsafeBytes.psetU16(this, address, value);
 #end
 	}
 
@@ -74,6 +93,8 @@ abstract ArrayBytes(ArrayBytesData) from ArrayBytesData to ArrayBytesData {
 		return untyped __cpp__("*((cpp::UInt16*)({0} + {1}))", this, address);
 #elseif java
 		return untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.getShort({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1})& 0xFFFF", this, address);
+#elseif cs
+		return hotmem.cs.UnsafeBytes.pgetU16(this, address);
 #else
 		return 0;
 #end
@@ -87,6 +108,8 @@ abstract ArrayBytes(ArrayBytesData) from ArrayBytesData to ArrayBytesData {
 		untyped __cpp__("*((cpp::Int32*)({0} + {1})) = {2}", this, address, value);
 #elseif java
 		untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.putInt({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1}, (int){2})", this, address, value);
+#elseif cs
+		hotmem.cs.UnsafeBytes.psetI32(this, address, value);
 #end
 	}
 
@@ -98,6 +121,8 @@ abstract ArrayBytes(ArrayBytesData) from ArrayBytesData to ArrayBytesData {
 		return untyped __cpp__("*((cpp::Int32*)({0} + {1}))", this, address);
 #elseif java
 		return untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.getInt({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1})", this, address);
+#elseif cs
+		return hotmem.cs.UnsafeBytes.pgetI32(this, address);
 #else
 		return 0;
 #end
@@ -111,6 +136,8 @@ abstract ArrayBytes(ArrayBytesData) from ArrayBytesData to ArrayBytesData {
 		untyped __cpp__("*((cpp::Float32*)({0} + {1})) = {2}", this, address, value);
 #elseif java
 		untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.putFloat({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1}, (float){2})", this, address, value);
+#elseif cs
+		hotmem.cs.UnsafeBytes.psetF32(this, address, value);
 #end
 	}
 
@@ -122,6 +149,8 @@ abstract ArrayBytes(ArrayBytesData) from ArrayBytesData to ArrayBytesData {
 		return untyped __cpp__("*((cpp::Float32*)({0} + {1}))", this, address);
 #elseif java
 		return untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.getFloat({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1})", this, address);
+#elseif cs
+		return hotmem.cs.UnsafeBytes.pgetF32(this, address);
 #else
 		return 0;
 #end

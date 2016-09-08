@@ -3,11 +3,11 @@ package hotmem.tests;
 import haxe.io.Bytes;
 import utest.Assert;
 
-class BytesViewTest {
+class HotBytesTest {
 
 	public function new() {}
 
-#if (js||flash||macro||neko||cpp||java)
+#if (js||flash||macro||neko||cpp||java||cs)
 	public function testBytesView() {
 		var bytes = Bytes.alloc(100);
 		var view = HotMemory.lock(bytes.getData());

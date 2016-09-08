@@ -83,6 +83,7 @@ abstract I32Array(I32ArrayData) from I32ArrayData to I32ArrayData {
 		this[index] = element;
 #elseif cs
 		this[index] = element;
+		//hotmem.cs.UnsafeBytes.setI32(this, index << 2, element);
 #elseif (neko||macro)
 		this[index] = element;
 #end
@@ -105,6 +106,7 @@ abstract I32Array(I32ArrayData) from I32ArrayData to I32ArrayData {
 		return this[index];
 #elseif cs
 		return this[index];
+		//return hotmem.cs.UnsafeBytes.getI32(this, index << 2);
 #elseif (neko||macro)
 		return this[index];
 #else
@@ -158,7 +160,6 @@ abstract I32Array(I32ArrayData) from I32ArrayData to I32ArrayData {
 #else
 		return 0;
 #end
-	// TODO: cs
 	}
 
 	@:unreflective
@@ -171,15 +172,12 @@ abstract I32Array(I32ArrayData) from I32ArrayData to I32ArrayData {
 		return HotMemory.bytes.getData();
 #elseif cpp
 		return this;
-//#elseif java
-//		return this;
 #else
 		return null;
-		//TODO: java & cs
 #end
 	}
 
-#if (js||flash||cpp||java)
+#if (js||flash||cpp||java||cs)
 	@:unreflective
 	@:access(hotmem.ArrayBytes)
 	inline public function getArrayBytes():ArrayBytes {
@@ -187,9 +185,13 @@ abstract I32Array(I32ArrayData) from I32ArrayData to I32ArrayData {
 		__checkValid();
 #end
 
+#if cs
+		return new ArrayBytes(hotmem.cs.UnsafeBytes.getPtr(this));
+#else
 		
 		return new ArrayBytes(this #if js  << 2 #end);
 		
+#end
 	}
 #end
 

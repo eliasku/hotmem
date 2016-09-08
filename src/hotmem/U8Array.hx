@@ -83,6 +83,7 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 		this[index] = element;
 #elseif cs
 		this[index] = element;
+		//hotmem.cs.UnsafeBytes.setU8(this, index, element);
 #elseif (neko||macro)
 		this[index] = element;
 #end
@@ -105,6 +106,7 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 		return this[index];
 #elseif cs
 		return this[index];
+		//return hotmem.cs.UnsafeBytes.getU8(this, index);
 #elseif (neko||macro)
 		return this[index];
 #else
@@ -158,7 +160,6 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 #else
 		return 0;
 #end
-	// TODO: cs
 	}
 
 	@:unreflective
@@ -171,15 +172,12 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 		return HotMemory.bytes.getData();
 #elseif cpp
 		return this;
-//#elseif java
-//		return this;
 #else
 		return null;
-		//TODO: java & cs
 #end
 	}
 
-#if (js||flash||cpp||java)
+#if (js||flash||cpp||java||cs)
 	@:unreflective
 	@:access(hotmem.ArrayBytes)
 	inline public function getArrayBytes():ArrayBytes {
@@ -187,9 +185,13 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 		__checkValid();
 #end
 
+#if cs
+		return new ArrayBytes(hotmem.cs.UnsafeBytes.getPtr(this));
+#else
 		
 		return new ArrayBytes(this);
 		
+#end
 	}
 #end
 

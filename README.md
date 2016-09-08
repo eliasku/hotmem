@@ -10,6 +10,8 @@
 
 Hot memory access for Haxe
 
+Created to provide significantly boosted performance for typed arrays. Reduce amount of memory.
+
 ## Targets
 
 | Target | Array | ArrayBytes | HotBytes | Implementation         |
@@ -18,9 +20,9 @@ Hot memory access for Haxe
 | flash  | +     | +          | +        | Memory Domain          |
 | js     | +     | +          | +        | Parallel Typed Arrays  |
 | nodejs | +     | +          | +        | Parallel Typed Arrays* |
-| cs     | +     | -          | -        | NativeArray            |
-| java   | +     | +          | +        | NativeArray / Unsafe   |
-| neko   | +     | +          | +        | NativeArray / String   |
+| cs     | +     | +          | +        | NativeArray_T / Unsafe |
+| java   | +     | +          | +        | NativeArray_T / Unsafe |
+| neko   | +     | +          | +        | NativeArray_T / String |
 
 Define `-D hotmem_debug` enabling bounds checking, traces and additional asserts
 

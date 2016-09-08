@@ -2,6 +2,8 @@ package hotmem;
 
 #if java
 import hotmem.java.JavaUnsafe;
+#elseif cs
+import hotmem.cs.UnsafeBytes;
 #end
 
 #if js
@@ -12,6 +14,9 @@ private typedef HotBytesData = Int;
 private typedef HotBytesData = haxe.io.BytesData;
 #end
 
+#if cs
+@:unsafe
+#end
 abstract HotBytes(HotBytesData) {
 
 #if flash
@@ -45,6 +50,8 @@ abstract HotBytes(HotBytesData) {
 		untyped __dollar__ssetf(this, address, value, false);
 #elseif java
 		untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.putFloat({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1}, (float){2})", this, address, value);
+#elseif cs
+		UnsafeBytes.setF32(this, address, value);
 #end
 	}
 
@@ -59,6 +66,8 @@ abstract HotBytes(HotBytesData) {
 		untyped __dollar__sset32(this, address, value, false);
 #elseif java
 		untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.putInt({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1}, {2})", this, address, value);
+#elseif cs
+		UnsafeBytes.setI32(this, address, value);
 #end
 	}
 
@@ -73,8 +82,11 @@ abstract HotBytes(HotBytesData) {
 		untyped __dollar__sset16(this, address, value, false);
 #elseif java
 		untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.putShort({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1}, (short){2})", this, address, value);
+#elseif cs
+		UnsafeBytes.setU16(this, address, value);
 #end
 	}
+
 
 	public inline function setU8(address:Int, value:U8) {
 #if cpp
@@ -87,6 +99,8 @@ abstract HotBytes(HotBytesData) {
 		untyped __dollar__sset(this, address, value);
 #elseif java
 		untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.putByte({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1}, (byte){2})", this, address, value);
+#elseif cs
+		UnsafeBytes.setU8(this, address, value);
 #end
 	}
 
@@ -101,6 +115,8 @@ abstract HotBytes(HotBytesData) {
 		return untyped __dollar__sgetf(this, address, false);
 #elseif java
 		return untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.getFloat({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1})", this, address);
+#elseif cs
+		return UnsafeBytes.getF32(this, address);
 #else
 		return 0;
 #end
@@ -117,6 +133,8 @@ abstract HotBytes(HotBytesData) {
 		return untyped __dollar__sget32(this, address, false);
 #elseif java
 		return untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.getInt({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1}) & 0xFFFFFFFF", this, address);
+#elseif cs
+		return UnsafeBytes.getI32(this, address);
 #else
 		return 0;
 #end
@@ -133,11 +151,16 @@ abstract HotBytes(HotBytesData) {
 		return untyped __dollar__sget16(this, address, false);
 #elseif java
 		return untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.getShort({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1}) & 0xFFFF", this, address);
+#elseif cs
+		return UnsafeBytes.getU16(this, address);
 #else
 		return 0;
 #end
 	}
 
+#if cs
+	@:unsafe
+#end
 	public inline function getU8(address:Int):U8 {
 #if cpp
 		return untyped this[address];
@@ -149,6 +172,8 @@ abstract HotBytes(HotBytesData) {
 		return untyped __dollar__sget(this, address);
 #elseif java
 		return untyped __java__("hotmem.java.JavaUnsafe.UNSAFE.getByte({0}, hotmem.java.JavaUnsafe.BYTE_ARRAY_BASE_OFFSET + {1})", this, address);
+#elseif cs
+		return UnsafeBytes.getU8(this, address);
 #else
 		return 0;
 #end

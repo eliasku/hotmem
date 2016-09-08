@@ -10,7 +10,7 @@ class TestAll {
 		runner.addCase(new hotmem.tests.TypesTest());
 		runner.addCase(new hotmem.tests.ArraysTest());
 		runner.addCase(new hotmem.tests.GrowTest());
-		runner.addCase(new hotmem.tests.BytesViewTest());
+		runner.addCase(new hotmem.tests.HotBytesTest());
 		runner.addCase(new hotmem.tests.ArrayBytesTest());
 	}
 
