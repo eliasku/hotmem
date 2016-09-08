@@ -181,14 +181,14 @@ abstract U16Array(U16ArrayData) from U16ArrayData to U16ArrayData {
 
 #if (js||flash||cpp||java)
 	@:unreflective
-	@:access(hotmem.HotView)
-	inline public function getArrayBytes():HotView {
+	@:access(hotmem.ArrayBytes)
+	inline public function getArrayBytes():ArrayBytes {
 #if hotmem_debug
 		__checkValid();
 #end
 
 		
-		return new HotView(this #if js  << 1 #end);
+		return new ArrayBytes(this #if js  << 1 #end);
 		
 	}
 #end

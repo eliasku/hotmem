@@ -181,16 +181,16 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 
 #if (js||flash||cpp||java)
 	@:unreflective
-	@:access(hotmem.HotView)
-	inline public function getArrayBytes():HotView {
+	@:access(hotmem.ArrayBytes)
+	inline public function getArrayBytes():ArrayBytes {
 #if hotmem_debug
 		__checkValid();
 #end
 
 		::if (EL_SHIFT > 0)::
-		return new HotView(this #if js ::EXPR_LEFT_SHIFT:: #end);
+		return new ArrayBytes(this #if js ::EXPR_LEFT_SHIFT:: #end);
 		::else::
-		return new HotView(this);
+		return new ArrayBytes(this);
 		::end::
 	}
 #end

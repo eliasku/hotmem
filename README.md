@@ -4,7 +4,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/bu04g9dv5bikgfxp?svg=true)](https://ci.appveyor.com/project/eliasku/hotmem)
 
 [![Lang](https://img.shields.io/badge/language-haxe-orange.svg)](http://haxe.org)
-[![Version](https://img.shields.io/badge/version-v0.0.2-green.svg)](https://github.com/eliasku/hotmem)
+[![Version](https://img.shields.io/badge/version-v0.0.3-green.svg)](https://github.com/eliasku/hotmem)
 [![Dependencies](https://img.shields.io/badge/dependencies-none-green.svg)](https://github.com/eliasku/hotmem/blob/master/haxelib.json)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](http://opensource.org/licenses/MIT)
 
@@ -12,15 +12,15 @@ Hot memory access for Haxe
 
 ## Targets
 
-| Target | Arrays | Array Bytes | Hot Bytes | Implementation         |
-| ------ | ------:| :----------:| ---------:| ----------------------:|
-| cpp    | +      | +           | +         | hxcpp_memory / pointer |
-| flash  | +      | +           | +         | Memory Domain          |
-| js     | +      | +           | +         | Parallel Typed Arrays  |
-| nodejs | +      | +           | +         | Parallel Typed Arrays* |
-| cs     | +      | -           | -         | NativeArray            |
-| java   | +      | +           | +         | NativeArray / Unsafe   |
-| neko   | +      | +           | +         | NativeArray / String   |
+| Target | Array | ArrayBytes | HotBytes | Implementation         |
+| ------ | -----:| :---------:| --------:| ----------------------:|
+| cpp    | +     | +          | +        | hxcpp_memory / pointer |
+| flash  | +     | +          | +        | Memory Domain          |
+| js     | +     | +          | +        | Parallel Typed Arrays  |
+| nodejs | +     | +          | +        | Parallel Typed Arrays* |
+| cs     | +     | -          | -        | NativeArray            |
+| java   | +     | +          | +        | NativeArray / Unsafe   |
+| neko   | +     | +          | +        | NativeArray / String   |
 
 Define `-D hotmem_debug` enabling bounds checking, traces and additional asserts
 
@@ -28,7 +28,13 @@ Define `-D hotmem_debug` enabling bounds checking, traces and additional asserts
 
 Create your static dense fixed-length typed arrays before performance critical operations.
 
-Use `HotView` if different value-type access required
+Use `ArrayBytes` if you need access to hot-array memory
+For `haxe.io.BytesData` memory use `HotMemory::lock` and `HotBytes`
+
+Targets unification:
+- All operations should be type-size aligned.
+- All `HotMemory::lock` operations require `HotMemory::unlock` at the end.
+- For `flash` target you should be careful with `ApplicationDomain.current.memoryDomain`
 
 ## Types
 
@@ -46,9 +52,9 @@ For each types continuous memory fixed-length array is available (buffer)
 - `hotmem.I32Array`: 32-bit signed int array
 - `hotmem.F32Array`: 32-bit floating-point array
 
-## Hot View
+## Array Bytes
 
-Each array could be wrapped for memory read/write operations:
+Each hot array could be wrapped for memory read/write operations:
 
 ```
 var view = array.view(?atElement);
@@ -63,9 +69,9 @@ value = view.getI32(bytePosition);
 value = view.getF32(bytePosition);
 ```
 
-## Data View
+## Hot Bytes
 
-As Hot-View you able to `lock` any `haxe.io.BytesData`:
+For platform-specific fast memory access to the `haxe.io.BytesData` content.
 
 ## Modify templates and generate the code
 
@@ -74,9 +80,8 @@ As Hot-View you able to `lock` any `haxe.io.BytesData`:
 ## TODO:
 
 - More tests
-- NodeJS implementation
-- Types: I8, I16, U32, F64
-- Java / CS implementation for hot/bytes view
+- Missing types: I8, I16, U32, F64
+- C# / NodeJS implementation
 - General fallback for other dynamic targets (`macro` as well)
 - More documentation on BytesView / lock / unlock flow
 - Dox documentation

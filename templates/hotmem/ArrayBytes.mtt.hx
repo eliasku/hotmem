@@ -3,17 +3,17 @@ package hotmem;
 #if (cpp||js||flash||java)
 
 #if cpp
-private typedef HotViewData = cpp.RawPointer<cpp.Char>;
+private typedef ArrayBytesData = cpp.RawPointer<cpp.Char>;
 #elseif (js||flash)
-private typedef HotViewData = Int;
+private typedef ArrayBytesData = Int;
 #elseif java
-private typedef HotViewData = Dynamic;
+private typedef ArrayBytesData = Dynamic;
 #end
 
 @:notNull
 @:structAccess
 @:unreflective
-abstract HotView(HotViewData) from HotViewData to HotViewData {
+abstract ArrayBytes(ArrayBytesData) from ArrayBytesData to ArrayBytesData {
 
 #if cpp
 	@:unreflective

@@ -1,6 +1,5 @@
 package hotmem;
 
-import hotmem.js.JsBytesView;
 import haxe.io.BytesData;
 import haxe.io.Bytes;
 
@@ -10,17 +9,17 @@ class HotMemory {
 
 	static inline var MIN_SIZE_BYTES:Int = 4 * 1024 * 1024;
 
-	/** BytesView functionality **/
+	/** HotBytes functionality **/
 #if flash
 	static var _viewStack:Array<BytesData> = [];
 	static var _viewCurrent:BytesData;
 
-	public static function lock(data:BytesData):BytesView {
+	public static function lock(data:BytesData):HotBytes {
 		_viewStack.push(data);
 		return selectView(data);
 	}
 
-	public static function unlock():BytesView {
+	public static function unlock():HotBytes {
 		#if flash
 		_viewStack.pop();
 		var top = _viewStack.length > 0 ? _viewStack[_viewStack.length - 1] : null;
@@ -31,30 +30,30 @@ class HotMemory {
 			restore();
 		}
 		#end
-		return BytesView.NULL;
+		return HotBytes.NULL;
 	}
 
-	static function selectView(data:BytesData):BytesView {
+	static function selectView(data:BytesData):HotBytes {
 		data.endian = flash.utils.Endian.LITTLE_ENDIAN;
 		if(data.length < 1024) {
 			data.length = 1024;
 		}
 		flash.system.ApplicationDomain.currentDomain.domainMemory = data;
-		return new BytesView(0);
+		return new HotBytes(0);
 	}
 #else
-	inline public static function lock(data:BytesData):BytesView {
+	inline public static function lock(data:BytesData):HotBytes {
 	#if (cpp||neko||macro||java)
-		return new BytesView(data);
+		return new HotBytes(data);
 	#elseif js
-		return new BytesView(_bytesView.select(data));
+		return new HotBytes(_bytesView.select(data));
 	#else
-		return new BytesView(0);
+		return new HotBytes(0);
 	#end
 	}
 
-	inline public static function unlock():BytesView {
-		return BytesView.NULL;
+	inline public static function unlock():HotBytes {
+		return HotBytes.NULL;
 	}
 #end
 
@@ -62,7 +61,7 @@ class HotMemory {
 	static function __init__() {
 		untyped __js__("var HOT_U8, HOT_U16, HOT_I32, HOT_F32");
 	}
-	static var _bytesView:JsBytesView = new JsBytesView();
+	static var _bytesView:hotmem.js.HotBytesImpl = new hotmem.js.HotBytesImpl();
 #end
 
 #if flash

@@ -9,7 +9,7 @@ import js.html.Uint32Array;
 import js.html.Uint8Array;
 
 @:final
-class JsBytesView {
+class HotBytesImpl {
 
 	var data:ArrayBuffer;
 
@@ -20,7 +20,7 @@ class JsBytesView {
 
 	public function new() {}
 
-	public function select(value:ArrayBuffer):JsBytesView {
+	public function select(value:ArrayBuffer):HotBytesImpl {
 		if (data == value) {
 			return this;
 		}

@@ -181,14 +181,14 @@ abstract F32Array(F32ArrayData) from F32ArrayData to F32ArrayData {
 
 #if (js||flash||cpp||java)
 	@:unreflective
-	@:access(hotmem.HotView)
-	inline public function getArrayBytes():HotView {
+	@:access(hotmem.ArrayBytes)
+	inline public function getArrayBytes():ArrayBytes {
 #if hotmem_debug
 		__checkValid();
 #end
 
 		
-		return new HotView(this #if js  << 2 #end);
+		return new ArrayBytes(this #if js  << 2 #end);
 		
 	}
 #end

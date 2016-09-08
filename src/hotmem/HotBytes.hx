@@ -5,22 +5,22 @@ import hotmem.java.JavaUnsafe;
 #end
 
 #if js
-private typedef BytesViewData = hotmem.js.JsBytesView;
+private typedef HotBytesData = hotmem.js.HotBytesImpl;
 #elseif flash
-private typedef BytesViewData = Int;
+private typedef HotBytesData = Int;
 #else
-private typedef BytesViewData = haxe.io.BytesData;
+private typedef HotBytesData = haxe.io.BytesData;
 #end
 
-abstract BytesView(BytesViewData) {
+abstract HotBytes(HotBytesData) {
 
 #if flash
-	public inline static var NULL:BytesView = new BytesView(0);
+	public inline static var NULL:HotBytes = new HotBytes(0);
 #else
-	public inline static var NULL:BytesView = null;
+	public inline static var NULL:HotBytes = null;
 #end
 
-	inline public function new(data:BytesViewData) {
+	inline public function new(data:HotBytesData) {
 		this = data;
 	}
 

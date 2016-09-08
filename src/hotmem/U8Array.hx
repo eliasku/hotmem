@@ -181,14 +181,14 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 
 #if (js||flash||cpp||java)
 	@:unreflective
-	@:access(hotmem.HotView)
-	inline public function getArrayBytes():HotView {
+	@:access(hotmem.ArrayBytes)
+	inline public function getArrayBytes():ArrayBytes {
 #if hotmem_debug
 		__checkValid();
 #end
 
 		
-		return new HotView(this);
+		return new ArrayBytes(this);
 		
 	}
 #end

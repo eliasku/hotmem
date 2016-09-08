@@ -27,7 +27,7 @@ class GenerateHotMem extends Task {
 		var tplBuffer = new Template(File.getContent("templates/hotmem/Array.mtt.hx"));
 		var tplType = new Template(File.getContent("templates/hotmem/Type.mtt.hx"));
 		var tplHotMemory = new Template(File.getContent("templates/hotmem/HotMemory.mtt.hx"));
-		var tplHotView = new Template(File.getContent("templates/hotmem/HotView.mtt.hx"));
+		var tplArrayBytes = new Template(File.getContent("templates/hotmem/ArrayBytes.mtt.hx"));
 
 		var types = [
 			"U8",
@@ -125,6 +125,6 @@ class GenerateHotMem extends Task {
 		}
 
 		File.saveContent(_outputPath + "HotMemory.hx", tplHotMemory.execute(typesContext));
-		File.saveContent(_outputPath + "HotView.hx", tplHotView.execute(typesContext));
+		File.saveContent(_outputPath + "ArrayBytes.hx", tplArrayBytes.execute(typesContext));
 	}
 }
