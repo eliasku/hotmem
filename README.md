@@ -14,15 +14,15 @@ Created to provide significantly boosted performance for typed arrays. Reduce am
 
 ## Targets
 
-| Target | Array | ArrayBytes | HotBytes | Implementation         |
-| ------ | -----:| :---------:| --------:| ----------------------:|
-| cpp    | +     | +          | +        | hxcpp_memory / pointer |
-| flash  | +     | +          | +        | Memory Domain          |
-| js     | +     | +          | +        | Parallel Typed Arrays  |
-| nodejs | +     | +          | +        | Parallel Typed Arrays* |
-| cs     | +     | +          | +        | NativeArray_T / Unsafe |
-| java   | +     | +          | +        | NativeArray_T / Unsafe |
-| neko   | +     | -          | +        | NativeArray_T / String |
+| Target | Array | Array<->Bytes | ArrayBytes | HotBytes | Implementation         |
+| ------ | -----:| :------------:| ----------:| --------:|-----------------------:|
+| cpp    | +     | +             | +          | +        | hxcpp_memory / pointer |
+| flash  | +     | +             | +          | +        | Memory Domain          |
+| js     | +     | +             | +          | +        | Parallel Typed Arrays  |
+| nodejs | +     | +             | +          | +        | Parallel Typed Arrays* |
+| cs     | +     | -             | +          | +        | NativeArray_T / Unsafe |
+| java   | +     | -             | +          | +        | NativeArray_T / Unsafe |
+| neko   | +     | -             | -          | +        | NativeArray_T / String |
 
 Define `-D hotmem_debug` enabling bounds checking, traces and additional asserts
 
