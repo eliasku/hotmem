@@ -2,7 +2,6 @@ package ;
 
 import haxe.Template;
 import hxmake.Task;
-import hxmake.cli.CL;
 import sys.FileSystem;
 import sys.io.File;
 
@@ -13,9 +12,7 @@ class GenerateHotMem extends Task {
 	public function new() {}
 
 	override public function run() {
-		CL.workingDir.push(module.path);
 		generate();
-		CL.workingDir.pop();
 	}
 
 	function generate() {
