@@ -63,7 +63,7 @@ class HotMemory {
 #end
 
 #if flash
-	public static var U8(default, null):flash.utils.ByteArray;
+	public static var byteArray(default, null):flash.utils.ByteArray;
 #end
 
 	/** Heap Bytes **/
@@ -86,7 +86,7 @@ class HotMemory {
 	}
 
 	static function ensure(bytesLength:Int) {
-		if(bytesLength >= size) {
+		if(bytesLength > size) {
 			grow(bytesLength);
 		}
 	}
@@ -101,14 +101,20 @@ class HotMemory {
 		if(bytesLength & 0x3 != 0) {
 			bytesLength = (bytesLength + 4) & (~0x3);
 		}
+		if(bytesLength < (size << 1)) {
+			bytesLength = bytesLength << 1;
+		}
 #if flash
 		var old = bytes;
 		bytes = haxe.io.Bytes.alloc(bytesLength);
 		if(old != null) {
 			bytes.blit(0, old, 0, old.length);
 		}
-		U8 = bytes.getData();
+		byteArray = bytes.getData();
 		restore();
+		if(old != null) {
+			old.getData().clear();
+		}
 #elseif js
 		var old = bytes;
 		var baseBuffer = new js.html.Uint8Array(bytesLength);
@@ -121,13 +127,18 @@ class HotMemory {
 			bytes.blit(0, old, 0, old.length);
 		}
 #end
+
 		size = bytesLength;
+
+#if hotmem_debug
+		trace("[hotmem] Heap growing to " + size + " bytes");
+#end
 	}
 
 	/** Restore hot memory access **/
 	@:extern inline static public function restore() {
 #if flash
-		flash.Memory.select(U8);
+		flash.Memory.select(byteArray);
 #end
 	}
 
