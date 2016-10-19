@@ -4,9 +4,13 @@ environment:
   global:
     HAXELIB_ROOT: C:\projects\haxelib
   matrix:
-    - TARGET: flash,js,node
+    - TARGET: neko
+    - TARGET: node
+    - TARGET: js
+    - TARGET: flash
     - TARGET: cpp
-    - TARGET: neko,java,cs
+    - TARGET: cs
+    - TARGET: java
 
 matrix:
   fast_finish: true
