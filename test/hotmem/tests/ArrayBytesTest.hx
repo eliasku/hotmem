@@ -6,7 +6,7 @@ class ArrayBytesTest {
 
 	public function new() {}
 
-#if (neko||macro)
+#if neko
 	public function testPass() {
 		Assert.pass();
 	}

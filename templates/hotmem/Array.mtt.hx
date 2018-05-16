@@ -2,7 +2,7 @@ package hotmem;
 
 #if cpp
 private typedef ::TYPE::ArrayData = haxe.io.BytesData;
-#elseif (neko||macro)
+#elseif neko
 private typedef ::TYPE::ArrayData = neko.NativeArray<::TYPE::>;
 //#elseif java
 //private typedef ::TYPE::ArrayData = haxe.io.BytesData;
@@ -17,7 +17,7 @@ private typedef ::TYPE::ArrayData = Int;
 @:unreflective
 abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::ArrayData {
 
-	#if (cs||java||cpp||neko||macro)
+	#if (cs||java||cpp||neko)
 	public inline static var NULL:::TYPE::ArrayData = null;
 	#else
 	public inline static var NULL:Int = 0;
@@ -42,7 +42,7 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 #elseif cpp
 		this = new haxe.io.BytesData();
 		cpp.NativeArray.setSize(this, length::EXPR_LEFT_SHIFT::);
-#elseif (macro||neko)
+#elseif neko
 		this = neko.NativeArray.alloc(length);
 #elseif java
 		this = new java.NativeArray(length);
@@ -59,7 +59,7 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 #if (js||flash)
 		@:privateAccess HotMemory.free(this #if js ::EXPR_LEFT_SHIFT:: #end);
 		this = 0;
-#elseif (cpp||java||cs||macro||neko)
+#elseif (cpp||java||cs||neko)
 		this = null;
 #else
 		this = 0;
@@ -84,7 +84,7 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 #elseif cs
 		this[index] = element;
 		//hotmem.cs.UnsafeBytes.set::TYPE::(this, index::EXPR_LEFT_SHIFT::, element);
-#elseif (neko||macro)
+#elseif neko
 		this[index] = element;
 #end
 	}
@@ -107,7 +107,7 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 #elseif cs
 		return this[index];
 		//return hotmem.cs.UnsafeBytes.get::TYPE::(this, index::EXPR_LEFT_SHIFT::);
-#elseif (neko||macro)
+#elseif neko
 		return this[index];
 #else
 		return 0;
@@ -118,7 +118,7 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 	inline function get_length():Int {
 #if (java||cs)
 		return this.length;
-#elseif (neko||macro)
+#elseif neko
 		return neko.NativeArray.length(this);
 #else
 		return bytesLength::EXPR_RIGHT_SHIFT::;
@@ -140,7 +140,7 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 		return this.length::EXPR_LEFT_SHIFT::;
 #elseif cs
 		return this.length::EXPR_LEFT_SHIFT::;
-#elseif (neko||macro)
+#elseif neko
 		return length::EXPR_LEFT_SHIFT::;
 #else
 		return 0;

@@ -2,7 +2,7 @@ package hotmem;
 
 #if cpp
 private typedef F32ArrayData = haxe.io.BytesData;
-#elseif (neko||macro)
+#elseif neko
 private typedef F32ArrayData = neko.NativeArray<F32>;
 //#elseif java
 //private typedef F32ArrayData = haxe.io.BytesData;
@@ -17,7 +17,7 @@ private typedef F32ArrayData = Int;
 @:unreflective
 abstract F32Array(F32ArrayData) from F32ArrayData to F32ArrayData {
 
-	#if (cs||java||cpp||neko||macro)
+	#if (cs||java||cpp||neko)
 	public inline static var NULL:F32ArrayData = null;
 	#else
 	public inline static var NULL:Int = 0;
@@ -42,7 +42,7 @@ abstract F32Array(F32ArrayData) from F32ArrayData to F32ArrayData {
 #elseif cpp
 		this = new haxe.io.BytesData();
 		cpp.NativeArray.setSize(this, length << 2);
-#elseif (macro||neko)
+#elseif neko
 		this = neko.NativeArray.alloc(length);
 #elseif java
 		this = new java.NativeArray(length);
@@ -59,7 +59,7 @@ abstract F32Array(F32ArrayData) from F32ArrayData to F32ArrayData {
 #if (js||flash)
 		@:privateAccess HotMemory.free(this #if js  << 2 #end);
 		this = 0;
-#elseif (cpp||java||cs||macro||neko)
+#elseif (cpp||java||cs||neko)
 		this = null;
 #else
 		this = 0;
@@ -84,7 +84,7 @@ abstract F32Array(F32ArrayData) from F32ArrayData to F32ArrayData {
 #elseif cs
 		this[index] = element;
 		//hotmem.cs.UnsafeBytes.setF32(this, index << 2, element);
-#elseif (neko||macro)
+#elseif neko
 		this[index] = element;
 #end
 	}
@@ -107,7 +107,7 @@ abstract F32Array(F32ArrayData) from F32ArrayData to F32ArrayData {
 #elseif cs
 		return this[index];
 		//return hotmem.cs.UnsafeBytes.getF32(this, index << 2);
-#elseif (neko||macro)
+#elseif neko
 		return this[index];
 #else
 		return 0;
@@ -118,7 +118,7 @@ abstract F32Array(F32ArrayData) from F32ArrayData to F32ArrayData {
 	inline function get_length():Int {
 #if (java||cs)
 		return this.length;
-#elseif (neko||macro)
+#elseif neko
 		return neko.NativeArray.length(this);
 #else
 		return bytesLength >> 2;
@@ -140,7 +140,7 @@ abstract F32Array(F32ArrayData) from F32ArrayData to F32ArrayData {
 		return this.length << 2;
 #elseif cs
 		return this.length << 2;
-#elseif (neko||macro)
+#elseif neko
 		return length << 2;
 #else
 		return 0;

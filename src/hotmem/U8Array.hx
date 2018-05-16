@@ -2,7 +2,7 @@ package hotmem;
 
 #if cpp
 private typedef U8ArrayData = haxe.io.BytesData;
-#elseif (neko||macro)
+#elseif neko
 private typedef U8ArrayData = neko.NativeArray<U8>;
 //#elseif java
 //private typedef U8ArrayData = haxe.io.BytesData;
@@ -17,7 +17,7 @@ private typedef U8ArrayData = Int;
 @:unreflective
 abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 
-	#if (cs||java||cpp||neko||macro)
+	#if (cs||java||cpp||neko)
 	public inline static var NULL:U8ArrayData = null;
 	#else
 	public inline static var NULL:Int = 0;
@@ -42,7 +42,7 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 #elseif cpp
 		this = new haxe.io.BytesData();
 		cpp.NativeArray.setSize(this, length);
-#elseif (macro||neko)
+#elseif neko
 		this = neko.NativeArray.alloc(length);
 #elseif java
 		this = new java.NativeArray(length);
@@ -59,7 +59,7 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 #if (js||flash)
 		@:privateAccess HotMemory.free(this #if js  #end);
 		this = 0;
-#elseif (cpp||java||cs||macro||neko)
+#elseif (cpp||java||cs||neko)
 		this = null;
 #else
 		this = 0;
@@ -84,7 +84,7 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 #elseif cs
 		this[index] = element;
 		//hotmem.cs.UnsafeBytes.setU8(this, index, element);
-#elseif (neko||macro)
+#elseif neko
 		this[index] = element;
 #end
 	}
@@ -107,7 +107,7 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 #elseif cs
 		return this[index];
 		//return hotmem.cs.UnsafeBytes.getU8(this, index);
-#elseif (neko||macro)
+#elseif neko
 		return this[index];
 #else
 		return 0;
@@ -118,7 +118,7 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 	inline function get_length():Int {
 #if (java||cs)
 		return this.length;
-#elseif (neko||macro)
+#elseif neko
 		return neko.NativeArray.length(this);
 #else
 		return bytesLength;
@@ -140,7 +140,7 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 		return this.length;
 #elseif cs
 		return this.length;
-#elseif (neko||macro)
+#elseif neko
 		return length;
 #else
 		return 0;
