@@ -4,6 +4,8 @@ package hotmem;
 private typedef U8ArrayData = haxe.io.BytesData;
 #elseif neko
 private typedef U8ArrayData = neko.NativeArray<U8>;
+#elseif hl
+private typedef U8ArrayData = hl.NativeArray<U8>;
 //#elseif java
 //private typedef U8ArrayData = haxe.io.BytesData;
 #elseif cs
@@ -17,7 +19,7 @@ private typedef U8ArrayData = Int;
 @:unreflective
 abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 
-	#if (cs||java||cpp||neko)
+	#if (cs||java||cpp||neko||hl)
 	public inline static var NULL:U8ArrayData = null;
 	#else
 	public inline static var NULL:Int = 0;
@@ -48,6 +50,8 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 		this = new java.NativeArray(length);
 #elseif cs
 		this = new cs.NativeArray(length);
+#elseif hl
+		this = new hl.NativeArray(length);
 #end
 	}
 
@@ -59,7 +63,7 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 #if (js||flash)
 		@:privateAccess HotMemory.free(this #if js  #end);
 		this = 0;
-#elseif (cpp||java||cs||neko)
+#elseif (cpp||java||cs||neko||hl)
 		this = null;
 #else
 		this = 0;
@@ -86,6 +90,8 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 		//hotmem.cs.UnsafeBytes.setU8(this, index, element);
 #elseif neko
 		this[index] = element;
+#elseif hl
+		this[index] = element;
 #end
 	}
 
@@ -109,6 +115,8 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 		//return hotmem.cs.UnsafeBytes.getU8(this, index);
 #elseif neko
 		return this[index];
+#elseif hl
+		return this[index];
 #else
 		return 0;
 #end
@@ -116,7 +124,7 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 
 	@:unreflective
 	inline function get_length():Int {
-#if (java||cs)
+#if (java||cs||hl)
 		return this.length;
 #elseif neko
 		return neko.NativeArray.length(this);
@@ -139,6 +147,8 @@ abstract U8Array(U8ArrayData) from U8ArrayData to U8ArrayData {
 		//return this.length;
 		return this.length;
 #elseif cs
+		return this.length;
+#elseif hl
 		return this.length;
 #elseif neko
 		return length;

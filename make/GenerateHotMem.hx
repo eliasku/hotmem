@@ -1,5 +1,6 @@
 package ;
 
+import hxmake.cli.MakeLog;
 import haxe.Template;
 import hxmake.Task;
 import sys.FileSystem;
@@ -16,7 +17,6 @@ class GenerateHotMem extends Task {
 	}
 
 	function generate() {
-
 		if(!FileSystem.exists(_outputPath)) {
 			FileSystem.createDirectory(_outputPath);
 		}

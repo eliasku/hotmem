@@ -16,7 +16,7 @@
 	"contributors": [
 		"eliasku"
 	],
-	"releasenote": "check bounds",
-	"version": "0.0.3",
+	"releasenote": "update",
+	"version": "0.0.4",
 	"url": "https://github.com/eliasku/hotmem"
 }

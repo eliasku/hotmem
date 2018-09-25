@@ -4,6 +4,8 @@ package hotmem;
 private typedef ::TYPE::ArrayData = haxe.io.BytesData;
 #elseif neko
 private typedef ::TYPE::ArrayData = neko.NativeArray<::TYPE::>;
+#elseif hl
+private typedef ::TYPE::ArrayData = hl.NativeArray<::TYPE::>;
 //#elseif java
 //private typedef ::TYPE::ArrayData = haxe.io.BytesData;
 #elseif cs
@@ -17,7 +19,7 @@ private typedef ::TYPE::ArrayData = Int;
 @:unreflective
 abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::ArrayData {
 
-	#if (cs||java||cpp||neko)
+	#if (cs||java||cpp||neko||hl)
 	public inline static var NULL:::TYPE::ArrayData = null;
 	#else
 	public inline static var NULL:Int = 0;
@@ -48,6 +50,8 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 		this = new java.NativeArray(length);
 #elseif cs
 		this = new cs.NativeArray(length);
+#elseif hl
+		this = new hl.NativeArray(length);
 #end
 	}
 
@@ -59,7 +63,7 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 #if (js||flash)
 		@:privateAccess HotMemory.free(this #if js ::EXPR_LEFT_SHIFT:: #end);
 		this = 0;
-#elseif (cpp||java||cs||neko)
+#elseif (cpp||java||cs||neko||hl)
 		this = null;
 #else
 		this = 0;
@@ -86,6 +90,8 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 		//hotmem.cs.UnsafeBytes.set::TYPE::(this, index::EXPR_LEFT_SHIFT::, element);
 #elseif neko
 		this[index] = element;
+#elseif hl
+		this[index] = element;
 #end
 	}
 
@@ -109,6 +115,8 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 		//return hotmem.cs.UnsafeBytes.get::TYPE::(this, index::EXPR_LEFT_SHIFT::);
 #elseif neko
 		return this[index];
+#elseif hl
+		return this[index];
 #else
 		return 0;
 #end
@@ -116,7 +124,7 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 
 	@:unreflective
 	inline function get_length():Int {
-#if (java||cs)
+#if (java||cs||hl)
 		return this.length;
 #elseif neko
 		return neko.NativeArray.length(this);
@@ -139,6 +147,8 @@ abstract ::TYPE::Array(::TYPE::ArrayData) from ::TYPE::ArrayData to ::TYPE::Arra
 		//return this.length;
 		return this.length::EXPR_LEFT_SHIFT::;
 #elseif cs
+		return this.length::EXPR_LEFT_SHIFT::;
+#elseif hl
 		return this.length::EXPR_LEFT_SHIFT::;
 #elseif neko
 		return length::EXPR_LEFT_SHIFT::;

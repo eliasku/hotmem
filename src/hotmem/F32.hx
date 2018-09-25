@@ -1,6 +1,6 @@
 package hotmem;
 
-#if (flash||js||neko)
+#if (flash||js||neko||hl)
 typedef F32 = Float;
 #elseif java
 typedef F32 = Single;

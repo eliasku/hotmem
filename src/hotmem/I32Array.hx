@@ -4,6 +4,8 @@ package hotmem;
 private typedef I32ArrayData = haxe.io.BytesData;
 #elseif neko
 private typedef I32ArrayData = neko.NativeArray<I32>;
+#elseif hl
+private typedef I32ArrayData = hl.NativeArray<I32>;
 //#elseif java
 //private typedef I32ArrayData = haxe.io.BytesData;
 #elseif cs
@@ -17,7 +19,7 @@ private typedef I32ArrayData = Int;
 @:unreflective
 abstract I32Array(I32ArrayData) from I32ArrayData to I32ArrayData {
 
-	#if (cs||java||cpp||neko)
+	#if (cs||java||cpp||neko||hl)
 	public inline static var NULL:I32ArrayData = null;
 	#else
 	public inline static var NULL:Int = 0;
@@ -48,6 +50,8 @@ abstract I32Array(I32ArrayData) from I32ArrayData to I32ArrayData {
 		this = new java.NativeArray(length);
 #elseif cs
 		this = new cs.NativeArray(length);
+#elseif hl
+		this = new hl.NativeArray(length);
 #end
 	}
 
@@ -59,7 +63,7 @@ abstract I32Array(I32ArrayData) from I32ArrayData to I32ArrayData {
 #if (js||flash)
 		@:privateAccess HotMemory.free(this #if js  << 2 #end);
 		this = 0;
-#elseif (cpp||java||cs||neko)
+#elseif (cpp||java||cs||neko||hl)
 		this = null;
 #else
 		this = 0;
@@ -86,6 +90,8 @@ abstract I32Array(I32ArrayData) from I32ArrayData to I32ArrayData {
 		//hotmem.cs.UnsafeBytes.setI32(this, index << 2, element);
 #elseif neko
 		this[index] = element;
+#elseif hl
+		this[index] = element;
 #end
 	}
 
@@ -109,6 +115,8 @@ abstract I32Array(I32ArrayData) from I32ArrayData to I32ArrayData {
 		//return hotmem.cs.UnsafeBytes.getI32(this, index << 2);
 #elseif neko
 		return this[index];
+#elseif hl
+		return this[index];
 #else
 		return 0;
 #end
@@ -116,7 +124,7 @@ abstract I32Array(I32ArrayData) from I32ArrayData to I32ArrayData {
 
 	@:unreflective
 	inline function get_length():Int {
-#if (java||cs)
+#if (java||cs||hl)
 		return this.length;
 #elseif neko
 		return neko.NativeArray.length(this);
@@ -139,6 +147,8 @@ abstract I32Array(I32ArrayData) from I32ArrayData to I32ArrayData {
 		//return this.length;
 		return this.length << 2;
 #elseif cs
+		return this.length << 2;
+#elseif hl
 		return this.length << 2;
 #elseif neko
 		return length << 2;

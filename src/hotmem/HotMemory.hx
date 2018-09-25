@@ -43,7 +43,7 @@ class HotMemory {
 	}
 #else
 	inline public static function lock(data:BytesData):HotBytes {
-	#if (cpp||neko||java||cs)
+	#if (cpp||neko||java||cs||hl)
 		return new HotBytes(data);
 	#elseif js
 		return new HotBytes(_bytesView.select(data));

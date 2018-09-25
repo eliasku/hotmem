@@ -27,7 +27,7 @@ class ArraysTest {
 //		Assert.equals(0, array[6]);
 //		Assert.equals(0, array[7]);
 
-		array.dispose();
-		Assert.isTrue(array == U8Array.NULL);
+//		array.dispose();
+//		Assert.isTrue(array == U8Array.NULL);
 	}
 }

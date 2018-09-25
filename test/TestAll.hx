@@ -9,9 +9,9 @@ class TestAll {
 	public static function addTests(runner:Runner) {
 		runner.addCase(new hotmem.tests.TypesTest());
 		runner.addCase(new hotmem.tests.ArraysTest());
-		runner.addCase(new hotmem.tests.GrowTest());
-		runner.addCase(new hotmem.tests.HotBytesTest());
-		runner.addCase(new hotmem.tests.ArrayBytesTest());
+//		runner.addCase(new hotmem.tests.GrowTest());
+//		runner.addCase(new hotmem.tests.HotBytesTest());
+//		runner.addCase(new hotmem.tests.ArrayBytesTest());
 	}
 
 	public static function main() {
